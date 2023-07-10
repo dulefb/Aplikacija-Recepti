@@ -1,0 +1,79 @@
+.showDisplay{
+    display: block;
+}
+
+.hideDisplay{
+    display: none;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height:100%;
+}
+.header{
+    height: 60px;
+    background-color:darkred;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.header > a{
+    text-decoration: none;
+    color: black;
+}
+.header > a:hover{
+    color: whitesmoke;
+    border-bottom: 1px solid whitesmoke;
+}
+
+.middle{
+    height: 400px;
+    background-color:bisque;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer{
+    height: 150px;
+    background-color:darkred;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content:space-around;
+    align-items: center;
+}
+
+.footer > div{
+    width: 50%;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.footer-links > a, .footer-info > label{
+    align-self: center;
+    font-size: larger;
+}
+.footer-links > a{
+    text-decoration: none;
+    color: black;
+}
+
+.footer-links > a:hover{
+    color: whitesmoke;
+    border-bottom: 1px solid whitesmoke;
+}
+
+.footer-links > a:visited{
+    color: whitesmoke;
+}
+
+.header > a:visited{
+    color: whitesmoke;
+}
