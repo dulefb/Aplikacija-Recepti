@@ -1,12 +1,7 @@
 {
     "users":[
         {
-            "id":1,
-            "name":null,
-            "last_name":null,
-            "email":null,
-            "username":null,
-            "password":null
+            
         }
     ],
     "recept":[
