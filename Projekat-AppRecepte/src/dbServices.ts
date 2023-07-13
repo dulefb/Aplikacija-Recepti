@@ -2,6 +2,7 @@ import { Observable, from } from "rxjs";
 import { User } from "../classes/user";
 
 export function postUser(user:User) : Observable<boolean | void>{
+    console.log(user);
     const resp=fetch("http://localhost:3000/users",
                 {
                     method:"POST",
@@ -21,7 +22,7 @@ export function postUser(user:User) : Observable<boolean | void>{
     return from(resp);
 }
 
-export function getUser(id:number) : Observable<User>{
+export function getUser(id:number) : Observable<User[]>{
     const user = fetch("http://localhost:3000/users/"+id,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
@@ -36,8 +37,23 @@ export function getUser(id:number) : Observable<User>{
     return from(user);
 }
 
-export function getUserWithEmail(email:string) : Observable<User>{
+export function getUserWithEmail(email:string) : Observable<User[]>{
     const user = fetch("http://localhost:3000/users?email="+email,{method:"GET"})
+                    .then(response=>{
+                        if(!response.ok){
+                            return null;
+                        }
+                        else{
+                            return response.json();
+                        }
+                    })
+                    .catch(err=>console.log(err));
+    
+    return from(user);
+}
+
+export function getUserWithEmailAndPassword(email:string,password:string) : Observable<User[]>{
+    const user = fetch("http://localhost:3000/users?email="+email+"&password="+password,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
                             return null;

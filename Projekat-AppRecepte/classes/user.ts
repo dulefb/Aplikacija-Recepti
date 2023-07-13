@@ -5,10 +5,10 @@ export class User{
     email:string;
     password:string;
     city:string;
-    birth_date:Date;
+    birth_date:string;
     picture:string;
 
-    constructor(id:number,name:string,last_name:string,email:string,password:string,city:string,birth_date:Date){
+    constructor(id:number,name:string,last_name:string,email:string,password:string,city:string,birth_date:string){
         this.id=id;
         this.name=name;
         this.last_name=last_name;

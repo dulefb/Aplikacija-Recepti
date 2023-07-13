@@ -1,38 +1,81 @@
 {
-    "users":[
-        {
-            
-        }
-    ],
-    "recept":[
-        {
-            
-        }
-    ],
-    "vrsta-jela":[
-        {
-            "id":1,
-            "name":"Predjelo"
-        },
-        {
-            "id":2,
-            "name":"Supe i corbe"
-        },
-        {
-            "id":3,
-            "name":"Pite i testa"
-        },
-        {
-            "id":4,
-            "name":"Glavno jelo"
-        },
-        {
-            "id":5,
-            "name":"Torte"
-        },
-        {
-            "id":6,
-            "name":"Kolaci"
-        }
-    ]
+  "users": [
+    {
+      "id": 1,
+      "name": "Dusan",
+      "last_name": "Kostiv",
+      "email": "dusan123@gmail.com",
+      "password": "dusan123",
+      "city": "Grdelica",
+      "birth_date": "1955-12-05",
+      "picture": null
+    },
+    {
+      "id": 2,
+      "name": "Mile",
+      "last_name": "Milic",
+      "email": "mile@gmail.com",
+      "password": "mile123",
+      "city": "Leskovac",
+      "birth_date": "1995-12-02",
+      "picture": null
+    },
+    {
+      "id": 3,
+      "name": "Sava",
+      "last_name": "Savanovic",
+      "email": "sava@gmail.com",
+      "password": "sava123",
+      "city": "Nis",
+      "birth_date": "1999-09-03",
+      "picture": null
+    },
+    {
+      "id": 4,
+      "name": "Mitar",
+      "last_name": "Mitric",
+      "email": "mitar123@gmail.com",
+      "password": "dusan123",
+      "city": "Kragujevac",
+      "birth_date": "2002-05-05",
+      "picture": null
+    },
+    {
+      "id": 5,
+      "name": "mmmm",
+      "last_name": "mmmm",
+      "email": "mmm@gmail.com",
+      "password": "00000000",
+      "city": "aasdaasga",
+      "birth_date": "2000-11-11",
+      "picture": null
+    }
+  ],
+  "recept": [],
+  "vrsta-jela": [
+    {
+      "id": 1,
+      "name": "Predjelo"
+    },
+    {
+      "id": 2,
+      "name": "Supe i corbe"
+    },
+    {
+      "id": 3,
+      "name": "Pite i testa"
+    },
+    {
+      "id": 4,
+      "name": "Glavno jelo"
+    },
+    {
+      "id": 5,
+      "name": "Torte"
+    },
+    {
+      "id": 6,
+      "name": "Kolaci"
+    }
+  ]
 }
