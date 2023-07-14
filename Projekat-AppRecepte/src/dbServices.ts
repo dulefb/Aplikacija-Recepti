@@ -1,5 +1,6 @@
 import { Observable, from } from "rxjs";
 import { User } from "../classes/user";
+import { VrsteJela } from "../classes/vrsteJela";
 
 export function postUser(user:User) : Observable<boolean | void>{
     console.log(user);
@@ -97,6 +98,20 @@ export function deleteUser(id:number) : Observable<boolean | void>{
                             return true;
                         }
                     }).catch(err=>console.log(err));
+    
+    return from(userResp);
+}
+
+export function getVrsteJela() : Observable<VrsteJela[]>{
+    const userResp = fetch("http://localhost:3000/vrsta-jela",{method:"GET"})
+                    .then(response=>{
+                        if(!response.ok){
+                            return null;
+                        }
+                        else{
+                            return response.json();
+                        }
+                    }).catch(err=>alert(err));
     
     return from(userResp);
 }
