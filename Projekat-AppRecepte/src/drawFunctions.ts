@@ -228,3 +228,65 @@ export function drawDropdownList() : void{
         })
     })
 }
+
+export function drawNoviRecept(parent_node:HTMLElement) : void{
+    let divNazivRecepta = document.createElement("div");
+    divNazivRecepta.classList.add("divNazivRecepta");
+
+    let labelNaziv = document.createElement("label");
+    labelNaziv.innerHTML="Naziv:";
+    divNazivRecepta.appendChild(labelNaziv);
+
+    let inputNaziv = document.createElement("input");
+    inputNaziv.type="name";
+    inputNaziv.id="noviReceptName";
+    divNazivRecepta.appendChild(inputNaziv);
+
+    parent_node.appendChild(divNazivRecepta);
+
+    let divVrstaJela = document.createElement("div");
+    divVrstaJela.classList.add("divVrstaJela");
+
+    let labelVrstaJela = document.createElement("label");
+    labelVrstaJela.innerHTML="Vrsta jela:";
+    divVrstaJela.appendChild(labelVrstaJela);
+
+    let selectVrstaJela = document.createElement("select");
+    selectVrstaJela.classList.add("divVrstaJelaSelect");
+    getVrsteJela().subscribe(next=>{
+        next.forEach(x=>{
+            let selectOption = document.createElement("option");
+            selectOption.innerHTML=x.name;
+            selectOption.value=x.id.toString();
+            selectVrstaJela.appendChild(selectOption);
+        })
+    });
+    divVrstaJela.appendChild(selectVrstaJela);
+    parent_node.appendChild(divVrstaJela);
+
+    let divSastojci = document.createElement("div");
+    divSastojci.classList.add("divSastojci");
+
+    let labelSastojci = document.createElement("label");
+    labelSastojci.innerHTML="Sastojci:";
+    divSastojci.appendChild(labelSastojci);
+
+    let inputSastojci = document.createElement("input");
+    inputSastojci.type="text";
+    inputSastojci.id="noviReceptSastojci";
+    divSastojci.appendChild(inputSastojci);
+    parent_node.appendChild(divSastojci);
+
+    let divPriprema = document.createElement("div");
+    divPriprema.classList.add("divPriprema");
+
+    let labelPriprema = document.createElement("label");
+    labelPriprema.innerHTML="Priprema:";
+    divPriprema.appendChild(labelPriprema);
+
+    let inputPriprema = document.createElement("input");
+    inputPriprema.type="text";
+    inputPriprema.id="noviReceptPriprema";
+    divPriprema.appendChild(inputPriprema);
+    parent_node.appendChild(divPriprema);
+}
