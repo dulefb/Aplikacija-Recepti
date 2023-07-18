@@ -1,5 +1,7 @@
-import { getUser } from "./dbServices";
+import { Subject, auditTime, combineLatest, debounceTime, fromEvent, interval, map, sampleTime, switchMap, take, takeLast, takeUntil } from "rxjs";
+import { getUser, getUserWithEmail, getUserWithEmailAndPassword, getVrsteJela } from "./dbServices";
 import { drawLogin, drawSignup, userFilter, drawDropdownList } from "./drawFunctions";
+import { User } from "../classes/user";
 
 document.body.onload=()=>{
     userFilter();
@@ -42,6 +44,7 @@ document.body.onload=()=>{
                 });
             }
             drawLogin(document.querySelector(".middle"));
+            setUpLogin();
         });
     }
 
@@ -64,8 +67,14 @@ document.body.onload=()=>{
     const recepti = document.querySelector("a[href='#recepti']");
     if(recepti!==null){
         recepti.addEventListener("click",()=>{
-            document.querySelector("#myDropdown").classList.toggle("show");
-            if(document.querySelector("#myDropdown").classList.contains("show")){
+            const dropdowns = document.querySelectorAll(".dropdown-content-links");
+            const dropdown_container = document.querySelector(".dropdown-content");
+            if(dropdowns.length > 0){
+                dropdowns.forEach(value=>{
+                    dropdown_container.removeChild(value);
+                });
+            }
+            else{
                 drawDropdownList();
             }
         });
@@ -73,16 +82,65 @@ document.body.onload=()=>{
 
     // Close the dropdown if the user clicks outside of it
     window.onclick = function(event) {
-
-        if (!(event.target as Element).matches(".dropdown-content")) {
+        if (!(event.target as Element).matches("a[href='recepti']")) {
+            // document.querySelector("#myDropdown").classList.toggle("show");
             const dropdown_container = document.querySelector(".dropdown-content");
             const dropdowns = document.querySelectorAll(".dropdown-content-links");
-
-            dropdowns.forEach(value=>{
-                dropdown_container.removeChild(value);
-            });
+            if(dropdowns.length > 0)
+            {
+                dropdowns.forEach(value=>{
+                    dropdown_container.removeChild(value);
+                });
+            }
         }
     }
 
     
+}
+
+function setUpLogin(){
+    //must be set up when #prijavi-se is clicked
+    //separate in another file
+    const control$ = new Subject<string>();
+    const user:User=new User(null,null,null,null,null,null,null);
+
+    const password$ = fromEvent(document.querySelector("#userPass"),"input").pipe(
+        debounceTime(200),
+        map((event: InputEvent) => {
+            console.log((<HTMLInputElement>event.target).value);
+            return (<HTMLInputElement>event.target).value
+            }),
+        takeUntil(control$)
+    );
+
+    const email$ = fromEvent(document.querySelector("#userEmail"),"input").pipe(
+        debounceTime(200),
+        map((event: InputEvent) => {
+            console.log((<HTMLInputElement>event.target).value);
+            return (<HTMLInputElement>event.target).value
+            }),
+        takeUntil(control$)
+    );
+
+    const login$=combineLatest([email$,password$])
+        .pipe(takeUntil(control$))
+        .subscribe(next=>{
+            user.email=next[0];
+            user.password=next[1];
+        });
+
+    fromEvent(document.querySelector("#btnLogin"),"click")
+        .pipe(
+            map(x=>console.log(x)),
+            switchMap(()=>getUserWithEmailAndPassword(user.email,user.password))
+        )
+        .subscribe(next=>{
+            if(next.length===0){
+                alert("Niste uneli ispravne podatke");
+            }
+            else{
+                sessionStorage.setItem("current-user",next[0].email);
+                document.location.reload();
+            }
+        });
 }

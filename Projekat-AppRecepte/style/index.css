@@ -24,6 +24,8 @@
 .header a{
     text-decoration: none;
     color: black;
+    font-size: larger;
+    font-style: bold;
 }
 .header a:hover{
     color: whitesmoke;
@@ -59,6 +61,7 @@
 .footer-links > a, .footer-info > label{
     align-self: center;
     font-size: larger;
+    font-style: bold;
 }
 .footer-links > a{
     text-decoration: none;
@@ -69,16 +72,6 @@
     color: whitesmoke;
     border-bottom: 1px solid whitesmoke;
 }
-
-/*
-.footer-links > a:visited{
-    color: whitesmoke;
-}
-
-.header a:visited{
-    color: whitesmoke;
-}
-*/
 
 /* Dropdown Button */
 .dropbtn {
@@ -120,7 +113,7 @@
   }
   
   /* Change color of dropdown links on hover */
-  .dropdown-content a:hover {background-color: #ddd;}
+  .dropdown-content a:hover {background-color: #db9595;}
   
   /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
   .show {display:block;}

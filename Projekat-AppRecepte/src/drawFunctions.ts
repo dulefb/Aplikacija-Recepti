@@ -34,6 +34,7 @@ export function userFilter(){
     let currentUser = sessionStorage.getItem("current-user");
 
     if(currentUser!==null){
+        addLinkToClassElement(".header","#novi-recept","header-item","NOVI RECEPT");
         addLinkToClassElement(".header","#profil","header-item","PROFIL");
         addLinkToClassElement(".header","#odjavi-se","header-item","ODJAVI SE");
         removeLinkFromClassElement(".header","#prijavi-se");
@@ -44,6 +45,7 @@ export function userFilter(){
         addLinkToClassElement(".header","#kreiraj-nalog","header-item","KREIRAJ NALOG");
         removeLinkFromClassElement(".header","#profil");
         removeLinkFromClassElement(".header","#odjavi-se");
+        removeLinkFromClassElement(".header","#novi-recept");
     }
 }
 
@@ -176,10 +178,12 @@ export function drawLogin(parent_node:HTMLElement){
     divLoginInput.classList.add("divLoginInput");
 
     let emailInput = document.createElement("input");
+    emailInput.id="userEmail";
     emailInput.type = "email";
     divLoginInput.appendChild(emailInput);
 
     let passwordInput = document.createElement("input");
+    passwordInput.id="userPass";
     passwordInput.type = "password";
     divLoginInput.appendChild(passwordInput);
 
@@ -191,7 +195,9 @@ export function drawLogin(parent_node:HTMLElement){
     divLoginButton.classList.add("divLoginButton");
 
     let button = document.createElement("button");
+    button.id="btnLogin";
     button.innerHTML="Uloguj se";
+    /*
     button.onclick=()=>{
         if(emailInput.value==="" && passwordInput.value===""){
             alert("Morate da unesete sve podatke...");
@@ -209,6 +215,7 @@ export function drawLogin(parent_node:HTMLElement){
                 })
         }
     }
+    */
     divLoginButton.appendChild(button);
 
     parent_node.appendChild(divLoginButton);
