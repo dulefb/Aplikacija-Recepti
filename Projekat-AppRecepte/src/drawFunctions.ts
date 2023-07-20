@@ -230,6 +230,9 @@ export function drawDropdownList() : void{
 }
 
 export function drawNoviRecept(parent_node:HTMLElement) : void{
+    let divReceptParent = document.createElement("div");
+    divReceptParent.classList.add("divReceptParent");
+
     let divNazivRecepta = document.createElement("div");
     divNazivRecepta.classList.add("divNazivRecepta");
 
@@ -242,7 +245,7 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
     inputNaziv.id="noviReceptName";
     divNazivRecepta.appendChild(inputNaziv);
 
-    parent_node.appendChild(divNazivRecepta);
+    divReceptParent.appendChild(divNazivRecepta);
 
     let divVrstaJela = document.createElement("div");
     divVrstaJela.classList.add("divVrstaJela");
@@ -253,6 +256,10 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
 
     let selectVrstaJela = document.createElement("select");
     selectVrstaJela.classList.add("divVrstaJelaSelect");
+    let selectOption = document.createElement("option");
+    selectOption.innerHTML="";
+    selectOption.value="0";
+    selectVrstaJela.appendChild(selectOption);
     getVrsteJela().subscribe(next=>{
         next.forEach(x=>{
             let selectOption = document.createElement("option");
@@ -262,7 +269,7 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
         })
     });
     divVrstaJela.appendChild(selectVrstaJela);
-    parent_node.appendChild(divVrstaJela);
+    divReceptParent.appendChild(divVrstaJela);
 
     let divSastojci = document.createElement("div");
     divSastojci.classList.add("divSastojci");
@@ -275,7 +282,7 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
     inputSastojci.type="text";
     inputSastojci.id="noviReceptSastojci";
     divSastojci.appendChild(inputSastojci);
-    parent_node.appendChild(divSastojci);
+    divReceptParent.appendChild(divSastojci);
 
     let divPriprema = document.createElement("div");
     divPriprema.classList.add("divPriprema");
@@ -284,9 +291,41 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
     labelPriprema.innerHTML="Priprema:";
     divPriprema.appendChild(labelPriprema);
 
-    let inputPriprema = document.createElement("input");
-    inputPriprema.type="text";
+    let inputPriprema = document.createElement("textarea");
     inputPriprema.id="noviReceptPriprema";
+    inputPriprema.cols=30;
+    inputPriprema.rows=15;
     divPriprema.appendChild(inputPriprema);
-    parent_node.appendChild(divPriprema);
+    divReceptParent.appendChild(divPriprema);
+
+    let divSlika = document.createElement("div");
+    divSlika.classList.add("divSlika");
+
+    let labelSlika = document.createElement("label");
+    labelSlika.innerHTML="Dodaj sliku";
+    divSlika.appendChild(labelSlika);
+    
+    let slikaFile = document.createElement("input");
+    slikaFile.id="slikaRecept";
+    slikaFile.type="file";
+    divSlika.appendChild(slikaFile);
+
+    let slikaPreview = document.createElement("img");
+    slikaPreview.alt="Image preview";
+    slikaPreview.width=150;
+    slikaPreview.height=150;
+    divSlika.appendChild(slikaPreview);
+    divReceptParent.appendChild(divSlika);
+
+    let divButtonDodajRecept = document.createElement("div");
+    divButtonDodajRecept.classList.add("divButtonDodajRecept");
+
+    let btnDodajRecept = document.createElement("button");
+    btnDodajRecept.innerHTML="Dodaj";
+    btnDodajRecept.classList.add("buttonDodajRecept");
+    btnDodajRecept.disabled=true;
+    divButtonDodajRecept.appendChild(btnDodajRecept);
+    divReceptParent.appendChild(divButtonDodajRecept);
+
+    parent_node.appendChild(divReceptParent);
 }

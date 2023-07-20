@@ -9,13 +9,18 @@ export class Recept{
     sastojci:string;
     priprema:string;
     slika:string;
+    
+    constructor(){
+        this.naziv=null;
+        this.autor=null;
+        this.vrsta_jela=null;
+        this.sastojci=null;
+        this.priprema=null;
+        this.slika=null;
+    }
 
-    constructor(naziv:string,autor:number,vrsta_jela:number,sastojci:string,priprema:string,slika:string){
-        this.naziv=naziv;
-        this.autor=autor;
-        this.vrsta_jela=vrsta_jela;
-        this.sastojci=sastojci;
-        this.priprema=priprema;
-        this.slika=slika;
+    drawRecept(parent_node:HTMLElement){
+        let divRecept = document.createElement("div");
+        
     }
 }

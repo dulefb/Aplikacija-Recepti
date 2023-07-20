@@ -33,7 +33,7 @@
 }
 
 .middle{
-    height: 400px;
+    /*height: 400px;*/
     background-color:bisque;
     display: flex;
     flex-direction: column;
@@ -117,3 +117,30 @@
   
   /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
   .show {display:block;}
+
+.divReceptParent{
+    width:50%;
+    /*
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+    flex-wrap: wrap;
+    */
+}
+
+.divReceptParent > div{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content:left;
+    /*align-items: center;*/
+}
+
+.divReceptParent > div > label{
+    font-size: larger;
+}
+/*
+.divReceptParent > div > input{
+    align-self: flex-start;
+}
+*/

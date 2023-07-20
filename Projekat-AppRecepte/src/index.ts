@@ -1,7 +1,9 @@
 import { setUpLogin } from "./loginEvents";
 import { drawLogin, drawSignup, userFilter, drawDropdownList, drawNoviRecept } from "./drawFunctions";
 import { User } from "../classes/user";
-import { Subject } from "rxjs";
+import { Subject, interval, switchMap, takeLast, timer } from "rxjs";
+import { addImageObservable, addNewRecept, setImagePreview } from "./newReceptEvents";
+import { deleteRecept, getAllRecept } from "./dbServices";
 
 document.body.onload=()=>{
     userFilter();
@@ -97,6 +99,7 @@ document.body.onload=()=>{
     }
 
     const novi_recept = document.querySelector("a[href='#novi-recept']");
+    const receptControl$ = new Subject<string>();
     if(novi_recept!==null){
 
         novi_recept.addEventListener("click",()=>{
@@ -108,6 +111,15 @@ document.body.onload=()=>{
                 });
             }
             drawNoviRecept(document.querySelector(".middle"));
+            addNewRecept(receptControl$);
         });
     }
 }
+
+/*
+interval(60000)
+    .pipe(
+        switchMap(()=>getAllRecept().pipe(takeLast(4)))
+    )
+    .subscribe(next=>console.log(next));
+*/
