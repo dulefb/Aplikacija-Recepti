@@ -2,10 +2,11 @@ import { Observable, from, take, takeLast, map } from "rxjs";
 import { User } from "../classes/user";
 import { VrsteJela } from "../classes/vrsteJela";
 import { Recept } from "../classes/recept";
+import { receptiURL, usersURL, vrsta_jelaURL } from "./constants";
 
 export function postUser(user:User) : Observable<boolean | void>{
     console.log(user);
-    const resp=fetch("http://localhost:3000/users",
+    const resp=fetch(usersURL,
                 {
                     method:"POST",
                     headers: {
@@ -25,7 +26,7 @@ export function postUser(user:User) : Observable<boolean | void>{
 }
 
 export function getUser(id:number) : Observable<User[]>{
-    const user = fetch("http://localhost:3000/users/"+id,{method:"GET"})
+    const user = fetch(usersURL+"/"+id,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
                             return null;
@@ -40,7 +41,7 @@ export function getUser(id:number) : Observable<User[]>{
 }
 
 export function getUserWithEmail(email:string) : Observable<User[]>{
-    const user = fetch("http://localhost:3000/users?email="+email,{method:"GET"})
+    const user = fetch(usersURL+"?email="+email,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
                             return null;
@@ -55,7 +56,7 @@ export function getUserWithEmail(email:string) : Observable<User[]>{
 }
 
 export function getUserWithEmailAndPassword(email:string,password:string) : Observable<User[]>{
-    const user = fetch("http://localhost:3000/users?email="+email+"&password="+password,{method:"GET"})
+    const user = fetch(usersURL+"?email="+email+"&password="+password,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
                             return null;
@@ -70,7 +71,7 @@ export function getUserWithEmailAndPassword(email:string,password:string) : Obse
 }
 
 export function changeUser(user : User) : Observable<boolean | void>{
-    const userResp = fetch("http://localhost:3000/users",
+    const userResp = fetch(usersURL,
                         {
                             method:"PUT",
                             headers: {
@@ -90,7 +91,7 @@ export function changeUser(user : User) : Observable<boolean | void>{
 }
 
 export function deleteUser(id:number) : Observable<boolean | void>{
-    const userResp = fetch("http://localhost:3000/users/"+id,{method:"DELETE"})
+    const userResp = fetch(usersURL+"/"+id,{method:"DELETE"})
                     .then(response=>{
                         if(!response.ok){
                             return false;
@@ -104,7 +105,7 @@ export function deleteUser(id:number) : Observable<boolean | void>{
 }
 
 export function getVrsteJela() : Observable<VrsteJela[]>{
-    const userResp = fetch("http://localhost:3000/vrsta-jela",{method:"GET"})
+    const userResp = fetch(vrsta_jelaURL,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
                             return null;
@@ -118,7 +119,7 @@ export function getVrsteJela() : Observable<VrsteJela[]>{
 }
 
 export function postNewRecept(recept:Recept) : Observable<boolean | void>{
-    const resp=fetch("http://localhost:3000/recept",
+    const resp=fetch(receptiURL,
                 {
                     method:"POST",
                     headers: {
@@ -138,9 +139,7 @@ export function postNewRecept(recept:Recept) : Observable<boolean | void>{
 }
 
 export function deleteRecept(id:number) : Observable<boolean | void>{
-    let recept=new Recept();
-    recept.id=id;
-    const resp = fetch("http://localhost:3000/recept/"+id,{
+    const resp = fetch(receptiURL+"/"+id,{
                     method:"DELETE"/*,
                     headers: {
                         'Content-Type': 'application/json'
@@ -160,7 +159,7 @@ export function deleteRecept(id:number) : Observable<boolean | void>{
 }
 
 export function getAllRecept() : Observable<Recept[]>{
-    const resp = fetch("http://localhost:3000/recept",{method:"GET"})
+    const resp = fetch(receptiURL,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
                             return response.json();
@@ -174,7 +173,7 @@ export function getAllRecept() : Observable<Recept[]>{
 }
 
 export function getReceptFromAutor(autor_id:number) : Observable<Recept[]>{
-    const resp = fetch("http://localhost:3000/recept?autor="+autor_id,{method:"GET"})
+    const resp = fetch(receptiURL+"?autor="+autor_id,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
                             return response.json();
@@ -188,7 +187,7 @@ export function getReceptFromAutor(autor_id:number) : Observable<Recept[]>{
 }
 
 export function getReceptFromVrstaJela(vrstaJela_id:number) : Observable<Recept[]>{
-    const resp = fetch("http://localhost:3000/recept?autor="+vrstaJela_id,{method:"GET"})
+    const resp = fetch(receptiURL+"vrsta_jela="+vrstaJela_id,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
                             return response.json();

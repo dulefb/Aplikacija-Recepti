@@ -4,6 +4,7 @@ import { User } from "../classes/user";
 import { Subject, interval, switchMap, takeLast, timer } from "rxjs";
 import { addImageObservable, addNewRecept, setImagePreview } from "./newReceptEvents";
 import { deleteRecept, getAllRecept } from "./dbServices";
+import { viewRecept } from "./pocetnaEvents";
 
 document.body.onload=()=>{
     userFilter();
@@ -32,6 +33,11 @@ document.body.onload=()=>{
                 document.querySelector(".middle").removeChild(x);
             });
         }
+        let button = document.createElement("button");
+        button.id="buttonPrikaziJos";
+        button.innerHTML="Prikazi jos"
+        document.querySelector(".middle").appendChild(button);
+        viewRecept();
     });
 
     const prijavi_se = document.querySelector("a[href='#prijavi-se']");
@@ -115,11 +121,3 @@ document.body.onload=()=>{
         });
     }
 }
-
-/*
-interval(60000)
-    .pipe(
-        switchMap(()=>getAllRecept().pipe(takeLast(4)))
-    )
-    .subscribe(next=>console.log(next));
-*/

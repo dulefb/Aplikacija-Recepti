@@ -1,4 +1,4 @@
-import { Observable, Subject, filter, from, fromEvent, map, takeUntil, of, switchMap, debounceTime, forkJoin, combineLatest } from "rxjs";
+import { Observable, Subject, filter, from, fromEvent, map, takeUntil, of, switchMap, debounceTime, forkJoin, combineLatest, zip } from "rxjs";
 import { Recept } from "../classes/recept";
 import { postNewRecept } from "./dbServices";
 
@@ -38,7 +38,12 @@ export function addNewRecept(control$:Subject<string>){
         .subscribe(next=>{
             if(next===true){
                 alert("Dodali ste novi recept.");
-                document.location.reload();
+                let inputs = document.querySelectorAll("input");
+                let txt = document.querySelector("textarea");
+                let img = document.querySelector("img");
+                img.src="";
+                inputs.forEach(x=>x.value="");
+                txt.value="";
             }
             else{
                 alert("Doslo je do greske,pokusajte ponovo.");
@@ -60,7 +65,11 @@ function imageReader(file:File,control$:Subject<string>) : Observable<string>{
     reader.readAsDataURL(file);
     return fromEvent(reader,"load")
             .pipe(
-                map(event=><string>(<FileReader>event.target).result),
+                map(event=>{
+                    const src = <string>(<FileReader>event.target).result;
+                    setImagePreview(src);
+                    return src;
+                }),
                 takeUntil(control$)
             );
 }
