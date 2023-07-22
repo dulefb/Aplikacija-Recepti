@@ -1,4 +1,4 @@
-import { Subject, auditTime, combineLatest, debounceTime, fromEvent, interval, map, sampleTime, switchMap, take, takeLast, takeUntil } from "rxjs";
+import { Subject, auditTime, combineLatest, debounceTime, delay, fromEvent, interval, map, sampleTime, switchMap, take, takeLast, takeUntil } from "rxjs";
 import { getUser, getUserWithEmail, getUserWithEmailAndPassword, getVrsteJela } from "./dbServices";
 import { User } from "../classes/user";
 
@@ -28,7 +28,8 @@ export function setUpLogin(control$:Subject<string>){
 
     fromEvent(document.querySelector("#btnLogin"),"click")
         .pipe(
-            switchMap(()=>getUserWithEmailAndPassword(user.email,user.password))
+            switchMap(()=>getUserWithEmailAndPassword(user.email,user.password)),
+            delay(500)
         )
         .subscribe(next=>{
             if(next.length===0){

@@ -18,9 +18,4 @@ export class Recept{
         this.priprema=null;
         this.slika=null;
     }
-
-    drawRecept(parent_node:HTMLElement){
-        let divRecept = document.createElement("div");
-        
-    }
 }
