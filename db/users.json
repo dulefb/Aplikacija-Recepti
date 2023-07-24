@@ -49,6 +49,26 @@
       "city": "aasdaasga",
       "birth_date": "2000-11-11",
       "picture": null
+    },
+    {
+      "id": 6,
+      "name": "milivoje",
+      "last_name": "brkic",
+      "email": "milebrka@gmail.com",
+      "password": "mile123",
+      "city": "Popovac",
+      "birth_date": "milivoje",
+      "picture": null
+    },
+    {
+      "id": 7,
+      "name": "s",
+      "last_name": "s",
+      "email": "x",
+      "password": "",
+      "city": "x",
+      "birth_date": "2023-07-03",
+      "picture": null
     }
   ],
   "recept": [
