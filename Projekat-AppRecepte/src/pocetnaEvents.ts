@@ -1,7 +1,10 @@
-import { fromEvent, map, switchMap, scan, take, Observable,zip, from } from "rxjs";
+import { fromEvent, map, switchMap, scan, take, Observable,zip, from, Subject, combineLatest, takeUntil, forkJoin, delay } from "rxjs";
 import { numberOfTakes } from "./constants";
-import { getAllRecept, getReceptFromVrstaJela, getReceptWithID } from "./dbServices";
+import { getAllRecept, getReceptFromVrstaJela, getReceptWithID, getUser, getVrsteJela, getVrsteJelaWithID } from "./dbServices";
 import { Recept } from "../classes/recept";
+import { User } from "../classes/user";
+import { VrsteJela } from "../classes/vrsteJela";
+import { drawReceptPage } from "./drawFunctions";
 
 export function viewRecept(){
 
@@ -40,13 +43,13 @@ export function viewRecept(){
 
             let niz = next[1].slice(0,next[0]);
             niz.forEach(x=>{
-                drawRecepte(divReceptParent,x.slika,x.naziv,x.id);
+                drawRecepte(divReceptParent,x.slika,x.naziv,x.id,x.autor,x.vrsta_jela);
             });
         });
 
 }
 
-function removeChildren(parent:Node,child:NodeListOf<Element>){
+export function removeChildren(parent:Node,child:NodeListOf<Element>){
     if(child!==null){
         child.forEach(x=>{
             parent.removeChild(x);
@@ -58,12 +61,12 @@ function addFirstRecept(parent:HTMLElement){
     getAllRecept()
         .subscribe(next=>{
             next.slice(0,numberOfTakes).forEach(x=>{
-                drawRecepte(parent,x.slika,x.naziv,x.id);
+                drawRecepte(parent,x.slika,x.naziv,x.id,x.autor,x.vrsta_jela);
             })
         });
 }
 
-function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string,id_value:number=0) : void{
+function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string,id_value:number,id_autor:number,id_vrstaJela:number) : void{
 
     let divRecept = document.createElement("div");
     divRecept.classList.add("divRecept");
@@ -84,32 +87,53 @@ function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string
     divReceptName.appendChild(labelName);
     divRecept.appendChild(divReceptName);
 
-    divRecept.onclick=()=>{
-        getReceptWithID(id_value)
-            .subscribe(next=>{
-                console.log(next);
-            })
-    }
+    let local_recept = new Recept();
+    let local_autor = new User(null,null,null,null,null,null,null);
+    let local_vrstaJela = new VrsteJela(null,null);
+
+    const recept$ = getObservableFromReceptClick(divRecept)
+            .pipe(
+                switchMap(()=>getReceptWithID(id_value))
+            );
+
+    const autor$ = getObservableFromReceptClick(divRecept)
+            .pipe(
+                switchMap(()=>getUser(id_autor))
+            );
+    const vrsteJela$ = getObservableFromReceptClick(divRecept)
+            .pipe(
+                switchMap(()=>getVrsteJelaWithID(id_vrstaJela))
+            );
+
+    zip([recept$,autor$,vrsteJela$])
+        .subscribe(next=>{
+            local_recept=next[0];
+            local_autor=next[1];
+            local_vrstaJela=next[2];
+            drawReceptPage(local_recept,local_autor,local_vrstaJela);
+        });
+
     parent_node.appendChild(divRecept);
 }
 
-export function addObservableToRecept(link_element:HTMLElement,event:string,id_value:number) : void{
+export function addObservableToVrsteRecepta(link_element:HTMLElement,event:string,id_value:number) : void{
     fromEvent(link_element,event)
         .pipe(
             switchMap(()=>getReceptFromVrstaJela(id_value))
         )
         .subscribe(next=>{
-            let child = document.querySelectorAll(".middle > div");
-            if(child!==null){
-                child.forEach(x=>{
-                    document.querySelector(".middle").removeChild(x);
-                });
-            }
+            removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
+
             let divReceptFromVrstaJela = document.createElement("div");
             divReceptFromVrstaJela.classList.add("divReceptFromVrstaJela");
             next.forEach(el=>{
-                drawRecepte(divReceptFromVrstaJela,el.slika,el.naziv,el.id);
+                console.log(el);
+                drawRecepte(divReceptFromVrstaJela,el.slika,el.naziv,el.id,el.autor,el.vrsta_jela);
             });
             document.querySelector(".middle").appendChild(divReceptFromVrstaJela);
         })
+}
+
+function getObservableFromReceptClick(element:HTMLElement) : Observable<any>{
+    return fromEvent(element,"click");
 }

@@ -3,7 +3,9 @@ import { User } from "../classes/user";
 import { filter,Subject } from "rxjs";
 import { setUpLogin } from "./loginEvents";
 import { setUpSignin } from "./signupEvents";
-import { addObservableToRecept } from "./pocetnaEvents";
+import { addObservableToVrsteRecepta, removeChildren } from "./pocetnaEvents";
+import { Recept } from "../classes/recept";
+import { VrsteJela } from "../classes/vrsteJela";
 
 function addLinkToClassElement(class_element:string,href:string,class_name:string,text:string,id_value:number=0) : void{
     const link=document.createElement("a");
@@ -12,7 +14,7 @@ function addLinkToClassElement(class_element:string,href:string,class_name:strin
     link.innerHTML=text;
 
     if(class_name==="dropdown-content-links"){
-        addObservableToRecept(link,"click",id_value);
+        addObservableToVrsteRecepta(link,"click",id_value);
     }
 
     const element = document.querySelector(class_element);
@@ -346,4 +348,89 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
     divReceptParent.appendChild(divButtonDodajRecept);
 
     parent_node.appendChild(divReceptParent);
+}
+
+export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : void{
+    removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
+    let divReceptPage = document.createElement("div");
+    divReceptPage.classList.add("divReceptPage");
+
+    let divReceptPageSlika = document.createElement("div");
+    divReceptPageSlika.classList.add("divReceptPageSlika");
+
+    let receptSlika = document.createElement("img");
+    receptSlika.alt = "Recept image.";
+    receptSlika.src = recept.slika;
+
+    divReceptPageSlika.appendChild(receptSlika);
+    divReceptPage.appendChild(divReceptPageSlika);
+
+    let divReceptPageInfo = document.createElement("div");
+    divReceptPageInfo.classList.add("divReceptPageInfo");
+
+    //naziv recepta
+    let divRecepPageName = document.createElement("div");
+    divRecepPageName.classList.add("divReceptPageName");
+    let labelname = document.createElement("label");
+    labelname.innerHTML="Naziv recepta:";
+    divRecepPageName.appendChild(labelname);
+
+    let labelnameValue = document.createElement("label");
+    labelnameValue.innerHTML=recept.naziv;
+    divRecepPageName.appendChild(labelnameValue);
+    divReceptPageInfo.appendChild(divRecepPageName);
+
+    //ime autora
+    let divRecepPageAutor = document.createElement("div");
+    divRecepPageAutor.classList.add("divReceptPageAutor");
+    let labelautor = document.createElement("label");
+    labelautor.innerHTML="Ime autora:";
+    divRecepPageAutor.appendChild(labelautor);
+
+    let labelautorValue = document.createElement("label");
+    labelautorValue.innerHTML=autor.name+" "+autor.last_name;
+    divRecepPageAutor.appendChild(labelautorValue);
+    divReceptPageInfo.appendChild(divRecepPageAutor);
+
+    let divRecepPageVrstaJela = document.createElement("div");
+    divRecepPageVrstaJela.classList.add("divRecepPageVrstaJela");
+    let labelvrstaJela = document.createElement("label");
+    labelvrstaJela.innerHTML="Vrsta jela:";
+    divRecepPageVrstaJela.appendChild(labelvrstaJela);
+
+    let labelvrstaJelaValue = document.createElement("label");
+    labelvrstaJelaValue.innerHTML=vrsta_jela.name;
+    divRecepPageVrstaJela.appendChild(labelvrstaJelaValue);
+    divReceptPageInfo.appendChild(divRecepPageVrstaJela);
+
+    let divRecepPageSastojci = document.createElement("div");
+    divRecepPageSastojci.classList.add("divRecepPageSastojci");
+    let labelSastojci = document.createElement("label");
+    labelSastojci.innerHTML="Sastojci:";
+    divRecepPageSastojci.appendChild(labelSastojci);
+
+    let labelSastojciValue = document.createElement("label");
+    labelSastojciValue.innerHTML=recept.sastojci;
+    divRecepPageSastojci.appendChild(labelSastojciValue);
+    divReceptPageInfo.appendChild(divRecepPageSastojci);
+
+    let divRecepPagePriprema = document.createElement("div");
+    divRecepPagePriprema.classList.add("divRecepPagePriprema");
+    let labelPriprema = document.createElement("label");
+    labelPriprema.innerHTML="Priprema:";
+    divRecepPagePriprema.appendChild(labelPriprema);
+
+    let divPripremaLabels = document.createElement("div");
+    divPripremaLabels.classList.add("divPripremaLabels");
+    recept.priprema.split("\n").forEach(value=>{
+        let pripremaLabel=document.createElement("label");
+        pripremaLabel.innerHTML=value;
+        divPripremaLabels.appendChild(pripremaLabel);
+    })
+    divRecepPagePriprema.appendChild(divPripremaLabels);
+    divReceptPageInfo.appendChild(divRecepPagePriprema);
+    
+
+    divReceptPage.appendChild(divReceptPageInfo);
+    document.querySelector(".middle").appendChild(divReceptPage);
 }

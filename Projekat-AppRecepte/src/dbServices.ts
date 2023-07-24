@@ -25,7 +25,7 @@ export function postUser(user:User) : Observable<boolean | void>{
     return from(resp);
 }
 
-export function getUser(id:number) : Observable<User[]>{
+export function getUser(id:number) : Observable<User>{
     const user = fetch(usersURL+"/"+id,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
@@ -37,7 +37,7 @@ export function getUser(id:number) : Observable<User[]>{
                     })
                     .catch(err=>console.log(err));
     
-    return from(user);
+    return from(user).pipe(take(1));
 }
 
 export function getUserWithEmail(email:string) : Observable<User[]>{
@@ -116,6 +116,20 @@ export function getVrsteJela() : Observable<VrsteJela[]>{
                     }).catch(err=>alert(err));
     
     return from(userResp);
+}
+
+export function getVrsteJelaWithID(id:number) : Observable<VrsteJela>{
+    const userResp = fetch(vrsta_jelaURL+"/"+id,{method:"GET"})
+                    .then(response=>{
+                        if(!response.ok){
+                            return null;
+                        }
+                        else{
+                            return response.json();
+                        }
+                    }).catch(err=>alert(err));
+    
+    return from(userResp).pipe(take(1));
 }
 
 export function postNewRecept(recept:Recept) : Observable<boolean | void>{
