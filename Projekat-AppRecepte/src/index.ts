@@ -10,9 +10,9 @@ document.body.onload=()=>{
     userFilter();
     viewRecept();
 
-    // document.querySelector("a[href='#pocetna']").addEventListener("click",()=>{
-    // document.reload();
-    // });
+    document.querySelector("a[href='#pocetna']").addEventListener("click",()=>{
+        document.location.reload();
+    });
 
     const recepti = document.querySelector("a[href='#recepti']");
     if(recepti!==null){

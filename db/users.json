@@ -59,16 +59,6 @@
       "city": "Popovac",
       "birth_date": "milivoje",
       "picture": null
-    },
-    {
-      "id": 7,
-      "name": "s",
-      "last_name": "s",
-      "email": "x",
-      "password": "",
-      "city": "x",
-      "birth_date": "2023-07-03",
-      "picture": null
     }
   ],
   "recept": [

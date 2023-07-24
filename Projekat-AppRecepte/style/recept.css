@@ -1,18 +1,21 @@
-.divReceptDrawParent{
+.divReceptDrawParent,.divReceptFromVrstaJela{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 90%;
+    justify-content: center;
+    width: 100%;
     height: 100%;
 	margin:10px 10px 10px 10px;
 }
 
 .divRecept{
-    width: 25%;
-    height: 40%;
-}
-.divReceptSlika > img {
     width: 280px;
+    height: 100%;
+    margin: 5px 5px 5px 5px;
+}
+
+.divReceptSlika > img {
+    width: 80%;
     height: 250px;
 	
 }

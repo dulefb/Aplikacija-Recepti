@@ -187,7 +187,7 @@ export function getReceptFromAutor(autor_id:number) : Observable<Recept[]>{
 }
 
 export function getReceptFromVrstaJela(vrstaJela_id:number) : Observable<Recept[]>{
-    const resp = fetch(receptiURL+"vrsta_jela="+vrstaJela_id,{method:"GET"})
+    const resp = fetch(receptiURL+"?vrsta_jela="+vrstaJela_id,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
                             return response.json();
@@ -198,4 +198,18 @@ export function getReceptFromVrstaJela(vrstaJela_id:number) : Observable<Recept[
                     })
                     .catch(err=>console.log(err));
     return from(resp);
+}
+
+export function getReceptWithID(id:number) : Observable<Recept>{
+    const resp = fetch(receptiURL+"/"+id,{method:"GET"})
+                    .then(response=>{
+                        if(response.ok){
+                            return response.json();
+                        }
+                        else{
+                            return null;
+                        }
+                    })
+                    .catch(err=>console.log(err));
+    return from(resp).pipe(take(1));
 }
