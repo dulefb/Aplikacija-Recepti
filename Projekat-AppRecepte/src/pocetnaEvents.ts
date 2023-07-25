@@ -7,7 +7,6 @@ import { VrsteJela } from "../classes/vrsteJela";
 import { drawReceptPage } from "./drawFunctions";
 
 export function viewRecept(){
-
     
     let parent_node = <HTMLElement> document.querySelector(".middle");
 
@@ -66,7 +65,7 @@ function addFirstRecept(parent:HTMLElement){
         });
 }
 
-function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string,id_value:number,id_autor:number,id_vrstaJela:number) : void{
+export function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string,id_value:number,id_autor:number,id_vrstaJela:number) : void{
 
     let divRecept = document.createElement("div");
     divRecept.classList.add("divRecept");

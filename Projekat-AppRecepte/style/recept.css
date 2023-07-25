@@ -14,6 +14,22 @@
     margin: 5px 5px 5px 5px;
 }
 
+.divRecept > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.divRecept > div > img, .divRecept > div > label{
+    align-self: center;
+    font-size: large;
+}
+
+.divRecept:hover{
+    border: 1px solid black;
+    background-color: darkgray;
+}
+
 .divReceptSlika > img {
     width: 80%;
     height: 250px;
@@ -21,6 +37,36 @@
 }
 
 .divReceptPage{
+    width:80%;
     display: flex;
     flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.divReceptPageSlika > img{
+    width: 100%;
+    height: 300px;
+}
+
+.divReceptPageInfo{
+    width: 90%;
+}
+
+.divReceptPageInfo label{
+    font-size: larger;
+}
+
+.main-label{
+    font-weight: bold;
+}
+
+.divReceptPageInfo a{
+    text-decoration: none;
+    color: black;
+    font-size: larger;
+    font-style: bold;
+}
+.divReceptPageInfo a:hover{
+    color:brown;
+    /*border-bottom: 1px solid whitesmoke;*/
 }

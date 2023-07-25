@@ -6,6 +6,7 @@ import { setUpSignin } from "./signupEvents";
 import { addObservableToVrsteRecepta, removeChildren } from "./pocetnaEvents";
 import { Recept } from "../classes/recept";
 import { VrsteJela } from "../classes/vrsteJela";
+import { viewUserProfile } from "./profilEvents";
 
 function addLinkToClassElement(class_element:string,href:string,class_name:string,text:string,id_value:number=0) : void{
     const link=document.createElement("a");
@@ -34,11 +35,8 @@ function removeLinkFromClassElement(class_element:string,link_href:string) : voi
 
 
 export function userFilter(){
-    let signup = <HTMLElement>document.querySelector("a[href='#kreiraj-nalog']");
-    let login = <HTMLElement>document.querySelector("a[href='#prijavi-se']");
-    let logoff = <HTMLElement>document.querySelector("a[href='#odjavi-se']");
-    let profileLink = <HTMLElement>document.querySelector("a[href='#profil']");
     let currentUser = sessionStorage.getItem("current-user");
+    let currentUserID = sessionStorage.getItem("current-user-id");
 
     if(currentUser!==null){
         addLinkToClassElement(".header","#novi-recept","header-item","NOVI RECEPT");
@@ -60,13 +58,7 @@ export function userFilter(){
     if(kreiraj_nalog!==null){
 
         kreiraj_nalog.addEventListener("click",()=>{
-            let child = document.querySelectorAll(".middle > div");
-            //console.log(child);
-            if(child!==null){
-                child.forEach(x=>{
-                    document.querySelector(".middle").removeChild(x);
-                });
-            }
+            removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
             drawSignup(document.querySelector(".middle"));
             setUpSignin(control$);
         });
@@ -77,13 +69,7 @@ export function userFilter(){
     if(prijavi_se!==null){
 
         prijavi_se.addEventListener("click",()=>{
-            let child = document.querySelectorAll(".middle > div");
-            //console.log(child);
-            if(child!==null){
-                child.forEach(x=>{
-                    document.querySelector(".middle").removeChild(x);
-                });
-            }
+            removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
             drawLogin(document.querySelector(".middle"));
             setUpLogin(login$);
         });
@@ -93,17 +79,15 @@ export function userFilter(){
     if(odjavi_se!==null){
 
         odjavi_se.addEventListener("click",()=>{
-            let child = document.querySelectorAll(".middle > div");
-            //console.log(child);
-            if(child!==null){
-                child.forEach(x=>{
-                    document.querySelector(".middle").removeChild(x);
-                });
-            }
+            removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
             sessionStorage.removeItem("current-user");
             sessionStorage.removeItem("current-user-id");
             document.location.reload();
         });
+    }
+    const profil = <HTMLElement>document.querySelector("a[href='#profil']");
+    if(profil!==null){
+        viewUserProfile(parseInt(currentUserID),profil);
     }
 }
 
@@ -138,6 +122,10 @@ export function drawSignup(parent_node:HTMLElement){
     let dateLabel = document.createElement("label");
     dateLabel.innerHTML="Datum rodjenja:";
     divSignupLabels.appendChild(dateLabel);
+
+    let slikaLabel = document.createElement("label");
+    slikaLabel.innerHTML="Datum rodjenja:";
+    divSignupLabels.appendChild(slikaLabel);
 
     divSignup.appendChild(divSignupLabels);
 
@@ -176,9 +164,24 @@ export function drawSignup(parent_node:HTMLElement){
     dateInput.type = "date";
     divSignupInput.appendChild(dateInput);
 
+    let slikaFile = document.createElement("input");
+    slikaFile.id="signup-image";
+    slikaFile.type="file";
+    divSignupInput.appendChild(slikaFile);
+
     divSignup.appendChild(divSignupInput);
 
     parent_node.appendChild(divSignup);
+
+    let divSlikaPreviw = document.createElement("div");
+    divSlikaPreviw.classList.add("divSlikaPreviw");
+
+    let slikaPreview = document.createElement("img");
+    slikaPreview.alt="Image preview";
+    slikaPreview.width=150;
+    slikaPreview.height=150;
+    divSlikaPreviw.appendChild(slikaPreview);
+    parent_node.appendChild(divSlikaPreviw);
 
     let divSignupButton = document.createElement("div");
     divSignupButton.classList.add("divSignupButton");
@@ -372,7 +375,8 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
     let divRecepPageName = document.createElement("div");
     divRecepPageName.classList.add("divReceptPageName");
     let labelname = document.createElement("label");
-    labelname.innerHTML="Naziv recepta:";
+    labelname.classList.add("main-label");
+    labelname.innerHTML="Naziv recepta: ";
     divRecepPageName.appendChild(labelname);
 
     let labelnameValue = document.createElement("label");
@@ -384,18 +388,22 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
     let divRecepPageAutor = document.createElement("div");
     divRecepPageAutor.classList.add("divReceptPageAutor");
     let labelautor = document.createElement("label");
-    labelautor.innerHTML="Ime autora:";
+    labelautor.innerHTML="Ime autora: ";
+    labelautor.classList.add("main-label");
     divRecepPageAutor.appendChild(labelautor);
 
-    let labelautorValue = document.createElement("label");
-    labelautorValue.innerHTML=autor.name+" "+autor.last_name;
-    divRecepPageAutor.appendChild(labelautorValue);
+    let linkautorValue = document.createElement("a");
+    linkautorValue.href="#autro-link";
+    viewUserProfile(autor.id,linkautorValue);
+    linkautorValue.innerHTML=autor.name+" "+autor.last_name;
+    divRecepPageAutor.appendChild(linkautorValue);
     divReceptPageInfo.appendChild(divRecepPageAutor);
 
     let divRecepPageVrstaJela = document.createElement("div");
     divRecepPageVrstaJela.classList.add("divRecepPageVrstaJela");
     let labelvrstaJela = document.createElement("label");
-    labelvrstaJela.innerHTML="Vrsta jela:";
+    labelvrstaJela.classList.add("main-label");
+    labelvrstaJela.innerHTML="Vrsta jela: ";
     divRecepPageVrstaJela.appendChild(labelvrstaJela);
 
     let labelvrstaJelaValue = document.createElement("label");
@@ -406,7 +414,8 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
     let divRecepPageSastojci = document.createElement("div");
     divRecepPageSastojci.classList.add("divRecepPageSastojci");
     let labelSastojci = document.createElement("label");
-    labelSastojci.innerHTML="Sastojci:";
+    labelSastojci.classList.add("main-label");
+    labelSastojci.innerHTML="Sastojci: ";
     divRecepPageSastojci.appendChild(labelSastojci);
 
     let labelSastojciValue = document.createElement("label");
@@ -417,7 +426,8 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
     let divRecepPagePriprema = document.createElement("div");
     divRecepPagePriprema.classList.add("divRecepPagePriprema");
     let labelPriprema = document.createElement("label");
-    labelPriprema.innerHTML="Priprema:";
+    labelPriprema.classList.add("main-label");
+    labelPriprema.innerHTML="Priprema: ";
     divRecepPagePriprema.appendChild(labelPriprema);
 
     let divPripremaLabels = document.createElement("div");
@@ -433,4 +443,85 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
 
     divReceptPage.appendChild(divReceptPageInfo);
     document.querySelector(".middle").appendChild(divReceptPage);
+}
+
+export function drawUserProfile(user:User) : HTMLDivElement{
+    let parent = document.querySelector(".middle");
+    let divUserProfile = document.createElement("div");
+    divUserProfile.classList.add("divUserProfile");
+
+    let userInfoNaslov = document.createElement("h2");
+    userInfoNaslov.classList.add("userInfoNaslov");
+    userInfoNaslov.innerHTML="Korisnik";
+    divUserProfile.appendChild(userInfoNaslov);
+
+    let divUserProfileInfo = document.createElement("div");
+    divUserProfileInfo.classList.add("divUserProfileInfo");
+
+    let divUserProfileInfoSlika = document.createElement("div");
+    divUserProfileInfoSlika.classList.add("divUserProfileInfoSlika");
+    //slika
+    let img = document.createElement("img");
+    img.alt = "User image...";
+    img.src = user.picture;
+    divUserProfileInfoSlika.appendChild(img);
+    divUserProfileInfo.appendChild(divUserProfileInfoSlika);
+
+    let divUserProfileInfoData = document.createElement("div");
+    divUserProfileInfoData.classList.add("divUserProfileInfoData");
+    //podaci
+    let divUserName = document.createElement("div");
+    let labelName = document.createElement("label");
+    labelName.classList.add("main-label");
+    labelName.innerHTML="Ime: ";
+    divUserName.appendChild(labelName);
+    let labelNameValue = document.createElement("div");
+    labelNameValue.innerHTML=user.name+" "+user.last_name;
+    divUserName.appendChild(labelNameValue); 
+    divUserProfileInfoData.appendChild(divUserName);
+
+    let divUserEmail = document.createElement("div");
+    let labelEmail = document.createElement("label");
+    labelEmail.classList.add("main-label");
+    labelEmail.innerHTML="Email: ";
+    divUserEmail.appendChild(labelEmail);
+    let labelEmailValue = document.createElement("div");
+    labelEmailValue.innerHTML=user.email;
+    divUserEmail.appendChild(labelEmailValue); 
+    divUserProfileInfoData.appendChild(divUserEmail);
+
+    let divUserCity = document.createElement("div");
+    let labelCity = document.createElement("label");
+    labelCity.classList.add("main-label");
+    labelCity.innerHTML="Grad: ";
+    divUserCity.appendChild(labelCity);
+    let labelCityValue = document.createElement("div");
+    labelCityValue.innerHTML=user.city;
+    divUserCity.appendChild(labelCityValue); 
+    divUserProfileInfoData.appendChild(divUserCity);
+
+    let divUserDate = document.createElement("div");
+    let labelDate = document.createElement("label");
+    labelDate.classList.add("main-label");
+    labelDate.innerHTML="Datum rodjenja: ";
+    divUserDate.appendChild(labelDate);
+    let labelDateValue = document.createElement("div");
+    labelDateValue.innerHTML=user.birth_date;
+    divUserDate.appendChild(labelDateValue); 
+    divUserProfileInfoData.appendChild(divUserDate);
+
+    divUserProfileInfo.appendChild(divUserProfileInfoData);
+    divUserProfile.appendChild(divUserProfileInfo);
+
+    let userReceptiNaslov = document.createElement("h2");
+    userReceptiNaslov.classList.add("userReceptiNaslov");
+    userReceptiNaslov.innerHTML="Recepti";
+    divUserProfile.appendChild(userReceptiNaslov);
+
+    let divUserProfileRecepti = document.createElement("div");
+    divUserProfileRecepti.classList.add("divUserProfileRecepti");
+    divUserProfile.appendChild(divUserProfileRecepti);
+
+    parent.appendChild(divUserProfile);
+    return divUserProfileRecepti;
 }

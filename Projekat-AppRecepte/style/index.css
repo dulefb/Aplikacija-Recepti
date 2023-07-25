@@ -33,7 +33,7 @@
 }
 
 .middle{
-    /*height: 400px;*/
+    height: 100%;
     background-color:bisque;
     display: flex;
     flex-direction: column;

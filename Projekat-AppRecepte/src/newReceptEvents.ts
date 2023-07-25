@@ -60,7 +60,7 @@ export function addImageObservable(control$:Subject<string>) : Observable<string
         );
 }
 
-function imageReader(file:File,control$:Subject<string>) : Observable<string>{
+export function imageReader(file:File,control$:Subject<string>) : Observable<string>{
     const reader = new FileReader();
     reader.readAsDataURL(file);
     return fromEvent(reader,"load")

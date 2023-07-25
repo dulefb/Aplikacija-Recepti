@@ -1,0 +1,41 @@
+.divUserProfile{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.divUserProfileInfo{
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.divUserProfileRecepti{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+	/*margin:10px 10px 10px 10px;*/
+}
+
+.divUserProfileInfoSlika > img{
+    width: 100%;
+    height: 300px;
+}
+
+.divUserProfileInfoData{
+    width: 30%;
+}
+
+.userInfoNaslov{
+    text-align: center;
+    background-color: gold;
+}
+
+.userReceptiNaslov{
+    text-align: center;
+    background-color: gold;
+}

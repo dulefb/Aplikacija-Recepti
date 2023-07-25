@@ -2,7 +2,7 @@ import { setUpLogin } from "./loginEvents";
 import { drawLogin, drawSignup, userFilter, drawDropdownList, drawNoviRecept } from "./drawFunctions";
 import { User } from "../classes/user";
 import { Subject, interval, switchMap, takeLast, timer } from "rxjs";
-import { addImageObservable, addNewRecept, setImagePreview } from "./newReceptEvents";
+import { addNewRecept } from "./newReceptEvents";
 import { deleteRecept, getAllRecept } from "./dbServices";
 import { viewRecept } from "./pocetnaEvents";
 
@@ -33,7 +33,6 @@ document.body.onload=()=>{
     // Close the dropdown if the user clicks outside of it
     window.onclick = function(event) {
         if (!(event.target as Element).matches("a[href='recepti']")) {
-            // document.querySelector("#myDropdown").classList.toggle("show");
             const dropdown_container = document.querySelector(".dropdown-content");
             const dropdowns = document.querySelectorAll(".dropdown-content-links");
             if(dropdowns.length > 0)

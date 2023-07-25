@@ -1,6 +1,7 @@
-import { Subject, fromEvent, debounceTime, map, takeUntil, combineLatest, from, switchMap, delay } from "rxjs";
+import { Subject, fromEvent, debounceTime, map, takeUntil, combineLatest, from, switchMap, delay, Observable } from "rxjs";
 import { User } from "../classes/user";
 import { getUserWithEmail, getUserWithEmailAndPassword, postUser } from "./dbServices";
+import { imageReader } from "./newReceptEvents";
 
 
 export function setUpSignin(control$:Subject<string>){
@@ -43,7 +44,9 @@ export function setUpSignin(control$:Subject<string>){
         takeUntil(control$)
     );
 
-    const combineValue$ = combineLatest([name$,lastname$,email$,password$,city$,date$])
+    const image$ = addImageObservable(control$);
+
+    const combineValue$ = combineLatest([name$,lastname$,email$,password$,city$,date$,image$])
                             .pipe(
                                 takeUntil(control$)
                             )
@@ -54,6 +57,7 @@ export function setUpSignin(control$:Subject<string>){
                                 user.password=next[3];
                                 user.city=next[4];
                                 user.birth_date=next[5];
+                                user.picture=next[6];
                                 enableSignup();
                             });
     
@@ -67,7 +71,7 @@ export function setUpSignin(control$:Subject<string>){
                 alert("Korisnik sa ovom email adresom vec postoji.Pokusajte drugu.");
             }
             else{
-                if(user.name===null || user.last_name===null || user.email===null || user.password===null || user.city===null || user.birth_date===null){
+                if(user.name===null || user.last_name===null || user.email===null || user.password===null || user.city===null || user.birth_date===null || user.picture===null){
                     alert("Morate da unesete sve podatke");
                 }
                 else{
@@ -91,6 +95,15 @@ export function setUpSignin(control$:Subject<string>){
                 }
             }
         });
+}
+
+export function addImageObservable(control$:Subject<string>) : Observable<string>{
+    return fromEvent(document.querySelector("#signup-image"),"input")
+        .pipe(
+            map((event: InputEvent) => (<HTMLInputElement>event.target).files[0]),
+            switchMap(file=>imageReader(file,control$)),
+            takeUntil(control$)
+        );
 }
 
 function disableSignup(){
