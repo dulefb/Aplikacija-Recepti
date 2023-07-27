@@ -40,7 +40,7 @@ export function viewRecept(){
         .subscribe(next=>{
             removeChildren(divReceptParent,document.querySelectorAll(".divRecept"));
 
-            let niz = next[1].slice(0,next[0]);
+            let niz = next[1].reverse().slice(0,next[0]);
             niz.forEach(x=>{
                 drawRecepte(divReceptParent,x.slika,x.naziv,x.id,x.autor,x.vrsta_jela);
             });
@@ -59,7 +59,7 @@ export function removeChildren(parent:Node,child:NodeListOf<Element>){
 function addFirstRecept(parent:HTMLElement){
     getAllRecept()
         .subscribe(next=>{
-            next.slice(0,numberOfTakes).forEach(x=>{
+            next.reverse().slice(0,numberOfTakes).forEach(x=>{
                 drawRecepte(parent,x.slika,x.naziv,x.id,x.autor,x.vrsta_jela);
             })
         });
@@ -135,4 +135,21 @@ export function addObservableToVrsteRecepta(link_element:HTMLElement,event:strin
 
 function getObservableFromReceptClick(element:HTMLElement) : Observable<any>{
     return fromEvent(element,"click");
+}
+
+export function toggleSearchBar(){
+    let link = <HTMLLinkElement> document.querySelector("a[href='#search-input']");
+    link.onclick=()=>{
+        let div = <HTMLDivElement> document.querySelector("#search-bar-dropdown-show");
+        div.classList.toggle("hideDisplay");
+    }
+}
+
+export function hideSearchBar(){
+    let div = <HTMLDivElement> document.querySelector("#search-bar-dropdown-show");
+    div.classList.toggle("hideDisplay",true);
+}
+
+export function addObservableForSearch(){
+    const input$ = fromEvent(document.querySelector("#header-search-input"),"input");
 }

@@ -452,7 +452,12 @@ export function drawUserProfile(user:User) : HTMLDivElement{
 
     let userInfoNaslov = document.createElement("h2");
     userInfoNaslov.classList.add("userInfoNaslov");
-    userInfoNaslov.innerHTML="Korisnik";
+    if(sessionStorage.getItem("current-user-id")===user.id.toString()){
+        userInfoNaslov.innerHTML="Vas profil";
+    }
+    else{
+        userInfoNaslov.innerHTML="Korisnik";
+    }
     divUserProfile.appendChild(userInfoNaslov);
 
     let divUserProfileInfo = document.createElement("div");

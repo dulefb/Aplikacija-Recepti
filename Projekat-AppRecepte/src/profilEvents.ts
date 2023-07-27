@@ -17,7 +17,7 @@ export function viewUserProfile(user_id:number,event:HTMLElement) : void{
                     .subscribe(next=>{
                         removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
                         let userValue = next[0];
-                        let userRecepti = next[1];
+                        let userRecepti = next[1].reverse();
                         let divReceptDraw = drawUserProfile(userValue);
                         userRecepti.forEach(x=>{
                             drawRecepte(divReceptDraw,x.slika,x.naziv,x.id,userValue.id,x.vrsta_jela);

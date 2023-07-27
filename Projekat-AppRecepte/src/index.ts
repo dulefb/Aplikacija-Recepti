@@ -4,7 +4,7 @@ import { User } from "../classes/user";
 import { Subject, interval, switchMap, takeLast, timer } from "rxjs";
 import { addNewRecept } from "./newReceptEvents";
 import { deleteRecept, getAllRecept } from "./dbServices";
-import { viewRecept } from "./pocetnaEvents";
+import { hideSearchBar, toggleSearchBar, viewRecept } from "./pocetnaEvents";
 
 document.body.onload=()=>{
     userFilter();
@@ -30,6 +30,7 @@ document.body.onload=()=>{
         });
     }
 
+    toggleSearchBar();
     // Close the dropdown if the user clicks outside of it
     window.onclick = function(event) {
         if (!(event.target as Element).matches("a[href='recepti']")) {
@@ -41,6 +42,9 @@ document.body.onload=()=>{
                     dropdown_container.removeChild(value);
                 });
             }
+        }
+        if(!(event.target as Element).matches("a[href='#search-input']") && !(event.target as Element).matches("#header-search-input")/* && !(event.target as Element).matches("#search-bar-button")*/){
+            hideSearchBar();
         }
     }
 
