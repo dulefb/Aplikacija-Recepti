@@ -3,8 +3,7 @@ import { drawLogin, drawSignup, userFilter, drawDropdownList, drawNoviRecept } f
 import { User } from "../classes/user";
 import { Subject, interval, switchMap, takeLast, timer } from "rxjs";
 import { addNewRecept } from "./newReceptEvents";
-import { deleteRecept, getAllRecept } from "./dbServices";
-import { hideSearchBar, toggleSearchBar, viewRecept } from "./pocetnaEvents";
+import { addObservableForSearch, hideSearchBar, toggleSearchBar, viewRecept } from "./pocetnaEvents";
 
 document.body.onload=()=>{
     userFilter();
@@ -31,6 +30,7 @@ document.body.onload=()=>{
     }
 
     toggleSearchBar();
+    addObservableForSearch();
     // Close the dropdown if the user clicks outside of it
     window.onclick = function(event) {
         if (!(event.target as Element).matches("a[href='recepti']")) {

@@ -1,10 +1,10 @@
-import { fromEvent, map, switchMap, scan, take, Observable,zip, from, Subject, combineLatest, takeUntil, forkJoin, delay } from "rxjs";
+import { fromEvent, map, switchMap, scan, take, Observable,zip, from, Subject, combineLatest, takeUntil, forkJoin, delay, filter, debounceTime } from "rxjs";
 import { numberOfTakes } from "./constants";
 import { getAllRecept, getReceptFromVrstaJela, getReceptWithID, getUser, getVrsteJela, getVrsteJelaWithID } from "./dbServices";
 import { Recept } from "../classes/recept";
 import { User } from "../classes/user";
 import { VrsteJela } from "../classes/vrsteJela";
-import { drawReceptPage } from "./drawFunctions";
+import { drawReceptPage, drawSearchRecept } from "./drawFunctions";
 
 export function viewRecept(){
     
@@ -142,14 +142,64 @@ export function toggleSearchBar(){
     link.onclick=()=>{
         let div = <HTMLDivElement> document.querySelector("#search-bar-dropdown-show");
         div.classList.toggle("hideDisplay");
+        removeSearchBarRecepts();
     }
 }
 
 export function hideSearchBar(){
     let div = <HTMLDivElement> document.querySelector("#search-bar-dropdown-show");
     div.classList.toggle("hideDisplay",true);
+    removeSearchBarRecepts();
 }
 
-export function addObservableForSearch(){
-    const input$ = fromEvent(document.querySelector("#header-search-input"),"input");
+export function addObservableForSearch() {
+    fromEvent(document.querySelector("#header-search-input"),"input")
+                .pipe(
+                    debounceTime(200),
+                    map((event: InputEvent) => (<HTMLInputElement>event.target).value),
+                    filter(text=>text.length>=3),
+                    switchMap(value=>getAllRecept().pipe(map(array=>array.filter(x=>x.naziv.toLowerCase().includes(value)))))
+                )
+                .subscribe(next=>{
+                    let parent = document.querySelector("#search-bar-dropdown-show");
+                    removeSearchBarRecepts();
+                    next.forEach(recpet=>drawSearchRecept(parent,recpet));
+                });
+}
+
+export function removeSearchBarRecepts(){
+    let parent = document.querySelector("#search-bar-dropdown-show");
+    let children = document.querySelectorAll(".divSearchSingleRecept");
+    if(children.length>0){
+        children.forEach(child=>parent.removeChild(child));
+    } 
+}
+
+export function addObservableToSearchClick(element:HTMLElement,recept:Recept) : void{
+    let local_recept = new Recept();
+    let local_autor = new User(null,null,null,null,null,null,null);
+    let local_vrstaJela = new VrsteJela(null,null);
+
+    const eventClick$ = fromEvent(element,"click");
+    const recept$ = eventClick$
+            .pipe(
+                switchMap(()=>getReceptWithID(recept.id))
+            );
+
+    const autor$ = eventClick$
+            .pipe(
+                switchMap(()=>getUser(recept.autor))
+            );
+    const vrsteJela$ = eventClick$
+            .pipe(
+                switchMap(()=>getVrsteJelaWithID(recept.vrsta_jela))
+            );
+
+    zip([recept$,autor$,vrsteJela$])
+        .subscribe(next=>{
+            local_recept=next[0];
+            local_autor=next[1];
+            local_vrstaJela=next[2];
+            drawReceptPage(local_recept,local_autor,local_vrstaJela);
+        });
 }

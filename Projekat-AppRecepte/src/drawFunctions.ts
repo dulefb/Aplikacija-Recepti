@@ -3,7 +3,7 @@ import { User } from "../classes/user";
 import { filter,Subject } from "rxjs";
 import { setUpLogin } from "./loginEvents";
 import { setUpSignin } from "./signupEvents";
-import { addObservableToVrsteRecepta, removeChildren } from "./pocetnaEvents";
+import { addObservableToSearchClick, addObservableToVrsteRecepta, removeChildren } from "./pocetnaEvents";
 import { Recept } from "../classes/recept";
 import { VrsteJela } from "../classes/vrsteJela";
 import { viewUserProfile } from "./profilEvents";
@@ -529,4 +529,21 @@ export function drawUserProfile(user:User) : HTMLDivElement{
 
     parent.appendChild(divUserProfile);
     return divUserProfileRecepti;
+}
+
+export function drawSearchRecept(parent:Node,recept:Recept) : void{
+    let divSearchSingleRecept = document.createElement("div");
+    divSearchSingleRecept.classList.add("divSearchSingleRecept");
+
+    let img = document.createElement("img");
+    img.src=recept.slika;
+    divSearchSingleRecept.appendChild(img);
+
+    let labelName = document.createElement("label");
+    labelName.innerHTML = recept.naziv;
+    divSearchSingleRecept.appendChild(labelName);
+
+    addObservableToSearchClick(divSearchSingleRecept,recept);
+
+    parent.appendChild(divSearchSingleRecept);
 }
