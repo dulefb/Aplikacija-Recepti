@@ -17,3 +17,7 @@
     flex-direction: column;
     justify-content: space-between;
 }
+
+.divLoginButton{
+    padding: 10px;
+}

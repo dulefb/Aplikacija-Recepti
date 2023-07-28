@@ -3,6 +3,7 @@ import { User } from "../classes/user";
 import { VrsteJela } from "../classes/vrsteJela";
 import { Recept } from "../classes/recept";
 import { receptiURL, usersURL, vrsta_jelaURL } from "./constants";
+import { removeChildren } from "./pocetnaEvents";
 
 export function postUser(user:User) : Observable<boolean | void>{
     console.log(user);
@@ -182,7 +183,7 @@ export function getAllRecept() : Observable<Recept[]>{
                             return null;
                         }
                     })
-                    .catch(err=>console.log(err));
+                    .catch(err=>showError(err));
     return from(resp);
 }
 
@@ -226,4 +227,17 @@ export function getReceptWithID(id:number) : Observable<Recept>{
                     })
                     .catch(err=>console.log(err));
     return from(resp).pipe(take(1));
+}
+
+function showError(error:any){
+    let parent = document.querySelector(".middle");
+    removeChildren(parent,document.querySelectorAll(".middle > div"));
+    let divError = document.createElement("div");
+    divError.classList.add("divError");
+    let labelError = document.createElement("label");
+    labelError.style.fontSize="larger";
+    labelError.innerHTML=error.toString();
+    labelError.innerHTML = labelError.innerHTML.concat(". Error 404.");
+    divError.appendChild(labelError);
+    parent.appendChild(divError);
 }
