@@ -31,7 +31,7 @@ document.body.onload=()=>{
 
     toggleSearchBar();
     addObservableForSearch();
-    // Close the dropdown if the user clicks outside of it
+    
     window.onclick = function(event) {
         if (!(event.target as Element).matches("a[href='recepti']")) {
             const dropdown_container = document.querySelector(".dropdown-content");

@@ -14,7 +14,7 @@
 }
 .header{
     height: 60px;
-    background-color:darkred;
+    background-color:#90a17d;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -34,7 +34,7 @@
 
 .middle{
     height: 100%;
-    background-color:bisque;
+    background-color:#eeeeee;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,7 +42,7 @@
 
 .footer{
     height: 150px;
-    background-color:darkred;
+    background-color:#90a17d;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
