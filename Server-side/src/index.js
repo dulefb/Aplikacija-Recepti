@@ -1,10 +1,8 @@
 const http = require("http");
 const util = require("util");
 const url = require("url");
-const redis = require("redis");
+// const redis = require("redis");
 const formidable = require("formidable");
-const { User } = require("../interfaces/user");
-const { Message } = require("../interfaces/message");
 const { portNumber } = require("../config/config");
 //const redisClient = redis.createClient();
 
