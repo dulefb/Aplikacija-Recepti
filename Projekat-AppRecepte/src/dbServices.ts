@@ -6,14 +6,22 @@ import { receptiURL, usersURL, vrsta_jelaURL } from "./constants";
 import { removeChildren } from "./pocetnaEvents";
 
 export function postUser(user:User) : Observable<boolean | void>{
-    console.log(user);
+    // console.log(user);
+    let formBody = new URLSearchParams();
+    formBody.append('name',user.name);
+    formBody.append('last_name',user.last_name);
+    formBody.append('email',user.email);
+    formBody.append('password',user.password);
+    formBody.append('city',user.city);
+    formBody.append('birt_date',user.birth_date);
+    formBody.append('picture',user.picture);
     const resp=fetch(usersURL,
                 {
                     method:"POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/x-www-form-urlencoded'
                       },
-                    body: JSON.stringify(user)
+                    body: formBody
                 }).then(response=>{
                     if(!response.ok){
                         return false;
@@ -41,7 +49,7 @@ export function getUser(id:number) : Observable<User>{
     return from(user).pipe(take(1));
 }
 
-export function getUserWithEmail(email:string) : Observable<User[]>{
+export function getUserWithEmail(email:string) : Observable<User>{
     const user = fetch(usersURL+"?email="+email,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
@@ -56,7 +64,7 @@ export function getUserWithEmail(email:string) : Observable<User[]>{
     return from(user);
 }
 
-export function getUserWithEmailAndPassword(email:string,password:string) : Observable<User[]>{
+export function getUserWithEmailAndPassword(email:string,password:string) : Observable<User>{
     const user = fetch(usersURL+"?email="+email+"&password="+password,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
@@ -72,13 +80,21 @@ export function getUserWithEmailAndPassword(email:string,password:string) : Obse
 }
 
 export function changeUser(user : User) : Observable<boolean | void>{
+    let formBody = new URLSearchParams();
+    formBody.append('name',user.name);
+    formBody.append('last_name',user.last_name);
+    formBody.append('email',user.email);
+    formBody.append('password',user.password);
+    formBody.append('city',user.city);
+    formBody.append('birt_date',user.birth_date);
+    formBody.append('picture',user.picture);
     const userResp = fetch(usersURL,
                         {
                             method:"PUT",
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(user)
+                            body: formBody
                         }).then(response=>{
                             if(!response.ok){
                                 return false;

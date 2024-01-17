@@ -81,13 +81,12 @@ export function userFilter(){
         odjavi_se.addEventListener("click",()=>{
             removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
             sessionStorage.removeItem("current-user");
-            sessionStorage.removeItem("current-user-id");
             document.location.reload();
         });
     }
     const profil = <HTMLElement>document.querySelector("a[href='#profil']");
     if(profil!==null){
-        viewUserProfile(parseInt(currentUserID),profil);
+        viewUserProfile(parseInt(currentUser),profil);
     }
 }
 

@@ -48,36 +48,69 @@ const server = http.createServer(async(req,res)=>{
     if(req.method.toLowerCase()==='get')
     {
         if(rootPath[0]==='users'){
-            let user = await redisClient.hGetAll(queryData.email);
-            console.log(queryData);
-            console.log(user);
-            res.writeHead(200,'OK',headers);
-            res.write(JSON.stringify(user));
-            res.end();
+            if(queryData.email && queryData.password)
+            {
+                let user = await redisClient.hGetAll(queryData.email);
+
+                if(user.password===queryData.password){
+                    res.writeHead(200,'OK',headers);
+                    res.write(JSON.stringify(user));
+                    res.end();
+                }
+                else{
+                    res.writeHead(400,"Bad Request",headers);
+                    res.write("Incorrect credentials...");
+                    res.end();
+                }
+            }
+            else if(queryData.email)
+            {
+                let user = await redisClient.hGetAll(queryData.email);
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify(user));
+                res.end();
+            }
         }
     }
     if(req.method.toLowerCase()==='post')
     {
         if(rootPath[0]==='users'){
-            processRequestBody(req,(dataObj)=>{
-                redisClient.hSet(dataObj.email,dataObj);
-                res.writeHead(200,'OK',headers);
-                res.end();
+            processRequestBody(req,async (dataObj)=>{
+                let user = await redisClient.hGetAll(dataObj.email);
+                if(user.email){
+                    res.writeHead(400,'Bad Request',headers);
+                    res.write("User already exists...");
+                    res.end();
+                }
+                else{
+                    await redisClient.hSet(dataObj.email,dataObj);
+                    res.writeHead(200,'OK',headers);
+                    res.end();
+                }
             });
         }
     }
     if(req.method.toLowerCase()==='delete')
     {
         if(rootPath[0]==='users'){
-            redisClient.del(queryData.email);
-            res.writeHead(200,'OK',headers);
-            res.write("User deleted successfully");
-            res.end();
+            if(queryData.email){
+                redisClient.del(queryData.email);
+                res.writeHead(200,'OK',headers);
+                res.write("User deleted successfully");
+                res.end();
+            }
         }
     }
     if(req.method.toLowerCase()==='put')
     {
-        
+        if(rootPath[0]==='users'){
+            processRequestBody(req,async (dataObj)=>{
+                await redisClient.hSet(dataObj.email);
+                res.writeHead(200,'OK',headers);
+                res.write("User deleted successfully");
+                res.end();
+            });
+        }
     }
 });
 

@@ -32,14 +32,13 @@ export function setUpLogin(control$:Subject<string>){
             delay(500)
         )
         .subscribe(next=>{
-            if(next.length===0){
+            if(next===null){
                 alert("Niste uneli ispravne podatke");
             }
             else{
                 control$.next("Login complete...");
                 control$.complete();
-                sessionStorage.setItem("current-user",next[0].email);
-                sessionStorage.setItem("current-user-id",next[0].id.toString());
+                sessionStorage.setItem("current-user",next.email);
                 document.location.reload();
             }
         });

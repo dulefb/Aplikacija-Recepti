@@ -67,7 +67,7 @@ export function setUpSignin(control$:Subject<string>){
             delay(500)
         )
         .subscribe(next=>{
-            if(next.length>0){
+            if(next===null){
                 alert("Korisnik sa ovom email adresom vec postoji.Pokusajte drugu.");
             }
             else{
@@ -83,8 +83,8 @@ export function setUpSignin(control$:Subject<string>){
                                 control$.complete();
                                 getUserWithEmailAndPassword(user.email,user.password)
                                     .subscribe(value=>{
-                                        sessionStorage.setItem("current-user-id",value[0].id.toString());
-                                        sessionStorage.setItem("current-user",value[0].email);
+                                        console.log(value);
+                                        sessionStorage.setItem("current-user",value.email);
                                         document.location.reload();
                                     });
                             }
