@@ -34,7 +34,7 @@ export function postUser(user:User) : Observable<boolean | void>{
     return from(resp);
 }
 
-export function getUser(id:number) : Observable<User>{
+export function getUser(id:string) : Observable<User>{
     const user = fetch(usersURL+"/"+id,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
@@ -107,8 +107,8 @@ export function changeUser(user : User) : Observable<boolean | void>{
     return from(userResp);                  
 }
 
-export function deleteUser(id:number) : Observable<boolean | void>{
-    const userResp = fetch(usersURL+"/"+id,{method:"DELETE"})
+export function deleteUser(email:string) : Observable<boolean | void>{
+    const userResp = fetch(usersURL+"?email="+email,{method:"DELETE"})
                     .then(response=>{
                         if(!response.ok){
                             return false;
@@ -135,8 +135,8 @@ export function getVrsteJela() : Observable<VrsteJela[]>{
     return from(userResp);
 }
 
-export function getVrsteJelaWithID(id:number) : Observable<VrsteJela>{
-    const userResp = fetch(vrsta_jelaURL+"/"+id,{method:"GET"})
+export function getVrsteJelaWithID(id:string) : Observable<VrsteJela>{
+    const userResp = fetch(vrsta_jelaURL+"?id="+id,{method:"GET"})
                     .then(response=>{
                         if(!response.ok){
                             return null;
@@ -150,13 +150,21 @@ export function getVrsteJelaWithID(id:number) : Observable<VrsteJela>{
 }
 
 export function postNewRecept(recept:Recept) : Observable<boolean | void>{
+    let formBody = new URLSearchParams();
+    formBody.append('id',"0");
+    formBody.append('naziv',recept.naziv);
+    formBody.append('sastojci',recept.sastojci);
+    formBody.append('priprema',recept.priprema);
+    formBody.append('vrste_jela',recept.vrsta_jela);
+    formBody.append('slika',recept.slika);
+    formBody.append('autor',recept.autor);
     const resp=fetch(receptiURL,
                 {
                     method:"POST",
                     headers: {
                         'Content-Type': 'application/json'
                       },
-                    body: JSON.stringify(recept)
+                    body: formBody
                 }).then(response=>{
                     if(!response.ok){
                         return false;
@@ -203,7 +211,7 @@ export function getAllRecept() : Observable<Recept[]>{
     return from(resp);
 }
 
-export function getReceptFromAutor(autor_id:number) : Observable<Recept[]>{
+export function getReceptFromAutor(autor_id:string) : Observable<Recept[]>{
     const resp = fetch(receptiURL+"?autor="+autor_id,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
@@ -217,7 +225,7 @@ export function getReceptFromAutor(autor_id:number) : Observable<Recept[]>{
     return from(resp);
 }
 
-export function getReceptFromVrstaJela(vrstaJela_id:number) : Observable<Recept[]>{
+export function getReceptFromVrstaJela(vrstaJela_id:string) : Observable<Recept[]>{
     const resp = fetch(receptiURL+"?vrsta_jela="+vrstaJela_id,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
@@ -232,7 +240,7 @@ export function getReceptFromVrstaJela(vrstaJela_id:number) : Observable<Recept[
 }
 
 export function getReceptWithID(id:number) : Observable<Recept>{
-    const resp = fetch(receptiURL+"/"+id,{method:"GET"})
+    const resp = fetch(receptiURL+"?id="+id,{method:"GET"})
                     .then(response=>{
                         if(response.ok){
                             return response.json();

@@ -4,8 +4,8 @@ import { VrsteJela } from "./vrsteJela";
 export class Recept{
     id:number;
     naziv:string;
-    autor:number;
-    vrsta_jela:number;
+    autor:string;
+    vrsta_jela:string;
     sastojci:string;
     priprema:string;
     slika:string;

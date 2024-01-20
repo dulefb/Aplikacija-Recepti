@@ -11,18 +11,19 @@ export function addNewRecept(control$:Subject<string>){
     const priprema$ = addPripremaObservable(control$);
     const image$ = addImageObservable(control$);
 
-    combineLatest([name$,select$,ingredient$,priprema$,image$])
+    /*
+    combineLatest(name$,select$,ingredient$,priprema$,image$)
         .pipe(
-            takeUntil(control$)
         )
         .subscribe(next=>{
-            if(next[0]!=='' && next[1]!=='0' && next[2]!=='' && next[3]!=='' && next[4]!==''){
+            console.log(next);
+            if(next[0]!=='' && next[1]!=='' && next[2]!=='' && next[3]!=='' && next[4]!==''){
                 recept.naziv=next[0];
-                recept.vrsta_jela=parseInt(next[1]);
+                recept.vrsta_jela=next[1];
                 recept.sastojci=next[2];
                 recept.priprema=next[3];
                 recept.slika=next[4];
-                recept.autor=parseInt(sessionStorage.getItem("current-user-id"));
+                recept.autor=sessionStorage.getItem("current-user");
                 let btn = <HTMLInputElement>document.querySelector(".buttonDodajRecept");
                 btn.disabled=false;
             }
@@ -30,9 +31,24 @@ export function addNewRecept(control$:Subject<string>){
                 alert("Morate uneti sve podatke...");
             }
         });
+    */
 
+    const img$=addImageObservable(control$)
+                .subscribe(next=>{
+                    recept.slika=next;
+                    let btn = <HTMLInputElement>document.querySelector(".buttonDodajRecept");
+                    btn.disabled=false;
+                })
     fromEvent(document.querySelector(".buttonDodajRecept"),"click")
         .pipe(
+            map(()=>{
+                recept.naziv=(<HTMLInputElement>document.querySelector("#noviReceptName")).value;
+                recept.vrsta_jela=(<HTMLSelectElement>document.querySelector("select")).value;
+                recept.sastojci=(<HTMLInputElement>document.querySelector("#noviReceptSastojci")).value;
+                recept.priprema=(<HTMLInputElement>document.querySelector("#noviReceptPriprema")).value;
+                recept.autor=sessionStorage.getItem("current-user");
+                
+            }),
             switchMap(()=>postNewRecept(recept))
         )
         .subscribe(next=>{
@@ -55,8 +71,7 @@ export function addImageObservable(control$:Subject<string>) : Observable<string
     return fromEvent(document.querySelector("#slikaRecept"),"input")
         .pipe(
             map((event: InputEvent) => (<HTMLInputElement>event.target).files[0]),
-            switchMap(file=>imageReader(file,control$)),
-            takeUntil(control$)
+            switchMap(file=>imageReader(file,control$))
         );
 }
 
@@ -66,11 +81,11 @@ export function imageReader(file:File,control$:Subject<string>) : Observable<str
     return fromEvent(reader,"load")
             .pipe(
                 map(event=>{
+                    console.log("Image radi");
                     const src = <string>(<FileReader>event.target).result;
                     setImagePreview(src);
                     return src;
-                }),
-                takeUntil(control$)
+                })
             );
 }
 
@@ -83,8 +98,7 @@ export function addNazivObservable(control$:Subject<string>) : Observable<string
 {
     return fromEvent(document.querySelector("#noviReceptName"),"input").pipe(
         debounceTime(200),
-        map((event: InputEvent) => (<HTMLInputElement>event.target).value),
-        takeUntil(control$)
+        map((event: InputEvent) => (<HTMLInputElement>event.target).value)
     );
 }
 
@@ -92,8 +106,7 @@ export function addSelectObservable(control$:Subject<string>) : Observable<strin
 {
     return fromEvent(document.querySelector("select"),"change").pipe(
         map((event: InputEvent) => (<HTMLInputElement>event.target).value),
-        filter(value=>parseInt(value)>0),
-        takeUntil(control$)
+        filter(value=>parseInt(value)>0)
     );
 }
 
@@ -101,8 +114,7 @@ export function addSastojciObservable(control$:Subject<string>) : Observable<str
 {
     return fromEvent(document.querySelector("#noviReceptSastojci"),"input").pipe(
         debounceTime(200),
-        map((event: InputEvent) => (<HTMLInputElement>event.target).value),
-        takeUntil(control$)
+        map((event: InputEvent) => (<HTMLInputElement>event.target).value)
     );
 }
 
@@ -110,7 +122,6 @@ export function addPripremaObservable(control$:Subject<string>) : Observable<str
 {
     return fromEvent(document.querySelector("#noviReceptPriprema"),"input").pipe(
         debounceTime(200),
-        map((event: InputEvent) => (<HTMLInputElement>event.target).value),
-        takeUntil(control$)
+        map((event: InputEvent) => (<HTMLInputElement>event.target).value)
     );
 }

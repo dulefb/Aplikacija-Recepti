@@ -8,7 +8,7 @@ import { Recept } from "../classes/recept";
 import { VrsteJela } from "../classes/vrsteJela";
 import { viewUserProfile } from "./profilEvents";
 
-function addLinkToClassElement(class_element:string,href:string,class_name:string,text:string,id_value:number=0) : void{
+function addLinkToClassElement(class_element:string,href:string,class_name:string,text:string,id_value:string=null) : void{
     const link=document.createElement("a");
     link.href=href;
     link.classList.add(class_name);
@@ -86,7 +86,7 @@ export function userFilter(){
     }
     const profil = <HTMLElement>document.querySelector("a[href='#profil']");
     if(profil!==null){
-        viewUserProfile(parseInt(currentUser),profil);
+        viewUserProfile(currentUser,profil);
     }
 }
 
@@ -286,7 +286,7 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
         next.forEach(x=>{
             let selectOption = document.createElement("option");
             selectOption.innerHTML=x.name;
-            selectOption.value=x.id.toString();
+            selectOption.value=x.id;
             selectVrstaJela.appendChild(selectOption);
         })
     });
@@ -393,7 +393,7 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
 
     let linkautorValue = document.createElement("a");
     linkautorValue.href="#autro-link";
-    viewUserProfile(autor.id,linkautorValue);
+    viewUserProfile(autor.email,linkautorValue);
     linkautorValue.innerHTML=autor.name+" "+autor.last_name;
     divRecepPageAutor.appendChild(linkautorValue);
     divReceptPageInfo.appendChild(divRecepPageAutor);
@@ -451,7 +451,7 @@ export function drawUserProfile(user:User) : HTMLDivElement{
 
     let userInfoNaslov = document.createElement("h2");
     userInfoNaslov.classList.add("userInfoNaslov");
-    if(sessionStorage.getItem("current-user-id")===user.id.toString()){
+    if(sessionStorage.getItem("current-user")===user.email){
         userInfoNaslov.innerHTML="Vas profil";
     }
     else{

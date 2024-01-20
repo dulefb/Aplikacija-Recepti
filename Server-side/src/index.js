@@ -3,7 +3,7 @@ const util = require("util");
 const url = require("url");
 const redis = require("redis");
 const formidable = require("formidable");
-const { portNumber } = require("../config/config");
+const { portNumber, vrste_jela_counter,recept_counter } = require("../config/config");
 const redisClient = redis.createClient();
 
 function processRequestBody(requset,callback){
@@ -12,9 +12,7 @@ function processRequestBody(requset,callback){
         chunks.push(chunk);
     });
     requset.on("end", () => {
-        // console.log("all parts/chunks have arrived");
         const data = Buffer.concat(chunks);
-        // console.log("Data: ", data);
         const querystring = data.toString();
         const parsedData = new URLSearchParams(querystring);
         const dataObj = {};
@@ -41,6 +39,14 @@ const server = http.createServer(async(req,res)=>{
     if(req.method.toLowerCase()==='options')
     {
         if(rootPath[0]==='users'){
+            res.writeHead(200,'OK',headers);
+            res.end();
+        }
+        if(rootPath[0]==='vrsta-jela'){
+            res.writeHead(200,'OK',headers);
+            res.end();
+        }
+        if(rootPath[0]==='recept'){
             res.writeHead(200,'OK',headers);
             res.end();
         }
@@ -71,6 +77,74 @@ const server = http.createServer(async(req,res)=>{
                 res.end();
             }
         }
+        else if(rootPath[0]==='vrsta-jela'){
+            if(queryData.id){
+                let vrstaJela = await redisClient.get(queryData.id);
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify({id:queryData.id,name:vrstaJela}));
+                res.end();
+            }
+            else{
+                const keysArray = await redisClient.keys('vrste_jela:*');
+                const values = await redisClient.mGet(keysArray);
+                let vrsteJela=[];
+                keysArray.forEach((value,index)=>{
+                    vrsteJela.push({
+                        id:value,
+                        name:values[index]
+                    });
+                });
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify(vrsteJela));
+                res.end();
+            }
+        }
+        else if(rootPath[0]==='recept'){
+            if(queryData.autor){
+                const keysArray = await redisClient.keys('recept:*:autor:'+queryData.autor);
+                let receptAll=[];
+                for(let i=0;i<keysArray.length;i++){
+                    let recept = await redisClient.hGetAll(keysArray[i]);
+                    receptAll.push(recept);
+                }
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify(receptAll));
+                res.end();
+            }
+            else if(queryData.vrsta_jela){
+                const keysArray = await redisClient.keys('recept:*:vrste_jela:'+queryData.vrsta_jela);
+                let receptAll=[];
+                for(let i=0;i<keysArray.length;i++){
+                    let recept = await redisClient.hGetAll(keysArray[i]);
+                    receptAll.push(recept);
+                }
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify(receptAll));
+                res.end();
+            }
+            else if(queryData.id){
+                const keysArray = await redisClient.keys('recept:'+queryData.id+':vrste_jela:*');
+                let receptAll=[];
+                for(let i=0;i<keysArray.length;i++){
+                    let recept = await redisClient.hGetAll(keysArray[i]);
+                    receptAll.push(recept);
+                }
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify(receptAll[0]));
+                res.end();
+            }
+            else{
+                const keysArray = await redisClient.keys('recept:*:vrste_jela:*');
+                let receptAll=[];
+                for(let i=0;i<keysArray.length;i++){
+                    let recept = await redisClient.hGetAll(keysArray[i]);
+                    receptAll.push(recept);
+                }
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify(receptAll));
+                res.end();
+            }
+        }
     }
     if(req.method.toLowerCase()==='post')
     {
@@ -89,6 +163,35 @@ const server = http.createServer(async(req,res)=>{
                 }
             });
         }
+        else if(rootPath[0]==='vrsta-jela'){
+            processRequestBody(req,async (dataObj)=>{
+                const id = await redisClient.get(vrste_jela_counter);
+                const name = dataObj.name;
+                await redisClient.set('vrste_jela:'+id,name);
+                redisClient.incr(vrste_jela_counter);
+                res.writeHead(200,'OK',headers);
+                res.write('Vrsta jela added successfully.');
+                res.end();
+            });
+        }
+        else if(rootPath[0]==='recept'){
+            processRequestBody(req,async (dataObj)=>{
+                const id = await redisClient.get(recept_counter);
+                dataObj.id=id;
+                await redisClient.hSet('recept:'+id,dataObj);
+                redisClient.hSet('recept:'+id+':autor:'+dataObj.autor,dataObj);
+                redisClient.hSet('recept:'+id+':vrste_jela:'+dataObj.vrste_jela,dataObj);
+                redisClient.incr(recept_counter);
+                res.writeHead(200,'OK',headers);
+                res.write('Recept added successfully.');
+                res.end();
+            });
+        }
+        else{
+            res.writeHead(400,'ERROR',headers);
+            res.write("Invalid request");
+            res.end();
+        }
     }
     if(req.method.toLowerCase()==='delete')
     {
@@ -99,6 +202,19 @@ const server = http.createServer(async(req,res)=>{
                 res.write("User deleted successfully");
                 res.end();
             }
+        }
+        else if(rootPath[0]==='recept'){
+            if(queryData.id){
+                await redisClient.del('recept:'+queryData.id);
+                res.writeHead(200,'OK',headers);
+                res.write("Recept deleted successfully");
+                res.end();
+            }
+        }
+        else{
+            res.writeHead(400,'ERROR',headers);
+            res.write("Deleteing recept failed.");
+            res.end();
         }
     }
     if(req.method.toLowerCase()==='put')
@@ -118,4 +234,65 @@ server.listen(portNumber,()=>{
     console.log("Listening on port "+portNumber+"...\n\n");
     redisClient.connect();
     redisClient.on('error', err => console.log('Redis Client Error', err));
+    // AddVrstaJela();
+    // deleteRecepts();
 });
+
+async function deleteRecepts(){
+    let keysArray = await redisClient.keys('recept:*:autor:*');
+    for(let i=0;i<keysArray.length;i++){
+        let recept = await redisClient.del(keysArray[i]);
+    }
+
+    keysArray = await redisClient.keys('recept:*:vrste_jela:*');
+    for(let i=0;i<keysArray.length;i++){
+        let recept = await redisClient.del(keysArray[i]);
+    }
+
+    keysArray = await redisClient.keys('recept:*');
+    for(let i=0;i<keysArray.length;i++){
+        let recept = await redisClient.del(keysArray[i]);
+    }
+}
+function AddEntriesToRedis(){
+    //Data is added here
+
+}
+
+function AddUsers(){
+
+}
+
+async function AddRecepts(){
+    await redisClient.set('recept_counter',1);
+
+
+}
+
+async function AddVrstaJela(){
+    await redisClient.set(vrste_jela_counter,1);
+
+    let id = await redisClient.get(vrste_jela_counter);
+    redisClient.set('vrste_jela:'+id,'Glavno jelo');
+    redisClient.incr(vrste_jela_counter);
+
+    id = await redisClient.get(vrste_jela_counter);
+    redisClient.set('vrste_jela:'+id,'Supe i corbe');
+    redisClient.incr(vrste_jela_counter);
+
+    id = await redisClient.get(vrste_jela_counter);
+    redisClient.set('vrste_jela:'+id,'Pite i testa');
+    redisClient.incr(vrste_jela_counter);
+
+    id = await redisClient.get(vrste_jela_counter);
+    redisClient.set('vrste_jela:'+id,'Torte');
+    redisClient.incr(vrste_jela_counter);
+
+    id = await redisClient.get(vrste_jela_counter);
+    redisClient.set('vrste_jela:'+id,'Kolaci');
+    redisClient.incr(vrste_jela_counter);
+
+    // id = await redisClient.get(vrste_jela_counter);
+    // redisClient.set('vrste_jela:'+id,'Predjelo');
+    // redisClient.incr(vrste_jela_counter);
+}

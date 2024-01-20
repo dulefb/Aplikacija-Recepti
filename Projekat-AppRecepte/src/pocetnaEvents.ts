@@ -1,6 +1,6 @@
 import { fromEvent, map, switchMap, scan, take, Observable,zip, from, Subject, combineLatest, takeUntil, forkJoin, delay, filter, debounceTime } from "rxjs";
 import { numberOfTakes } from "./constants";
-import { getAllRecept, getReceptFromVrstaJela, getReceptWithID, getUser, getVrsteJela, getVrsteJelaWithID } from "./dbServices";
+import { getAllRecept, getReceptFromVrstaJela, getReceptWithID, getUser, getUserWithEmail, getVrsteJela, getVrsteJelaWithID } from "./dbServices";
 import { Recept } from "../classes/recept";
 import { User } from "../classes/user";
 import { VrsteJela } from "../classes/vrsteJela";
@@ -40,7 +40,7 @@ export function viewRecept(){
         .subscribe(next=>{
             removeChildren(divReceptParent,document.querySelectorAll(".divRecept"));
 
-            let niz = next[1].reverse().slice(0,next[0]);
+            let niz = next[1].slice(0,next[0]);
             niz.forEach(x=>{
                 drawRecepte(divReceptParent,x.slika,x.naziv,x.id,x.autor,x.vrsta_jela);
             });
@@ -65,7 +65,7 @@ function addFirstRecept(parent:HTMLElement){
         });
 }
 
-export function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string,id_value:number,id_autor:number,id_vrstaJela:number) : void{
+export function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta:string,id_value:number,id_autor:string,id_vrstaJela:string) : void{
 
     let divRecept = document.createElement("div");
     divRecept.classList.add("divRecept");
@@ -97,14 +97,14 @@ export function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta
 
     const autor$ = getObservableFromReceptClick(divRecept)
             .pipe(
-                switchMap(()=>getUser(id_autor))
+                switchMap(()=>getUserWithEmail(id_autor))
             );
     const vrsteJela$ = getObservableFromReceptClick(divRecept)
             .pipe(
                 switchMap(()=>getVrsteJelaWithID(id_vrstaJela))
             );
 
-    zip([recept$,autor$,vrsteJela$])
+    zip(recept$,autor$,vrsteJela$)
         .subscribe(next=>{
             local_recept=next[0];
             local_autor=next[1];
@@ -115,7 +115,7 @@ export function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta
     parent_node.appendChild(divRecept);
 }
 
-export function addObservableToVrsteRecepta(link_element:HTMLElement,event:string,id_value:number) : void{
+export function addObservableToVrsteRecepta(link_element:HTMLElement,event:string,id_value:string) : void{
     fromEvent(link_element,event)
         .pipe(
             switchMap(()=>getReceptFromVrstaJela(id_value))
