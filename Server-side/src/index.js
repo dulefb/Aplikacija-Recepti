@@ -50,6 +50,10 @@ const server = http.createServer(async(req,res)=>{
             res.writeHead(200,'OK',headers);
             res.end();
         }
+        if(rootPath[0]==='comment'){
+            res.writeHead(200,'OK',headers);
+            res.end();
+        }
     }
     if(req.method.toLowerCase()==='get')
     {
@@ -145,6 +149,18 @@ const server = http.createServer(async(req,res)=>{
                 res.end();
             }
         }
+        else if(rootPath[0]==='comment'){
+            if(queryData.id_recept){
+                let commment_text=await redisClient.lRange('comment:text:'+queryData.id_recept,0,-1);
+                let commment_user=await redisClient.lRange('comment:user:'+queryData.id_recept,0,-1);
+                res.writeHead(200,'OK',headers);
+                res.write(JSON.stringify({
+                    texts:commment_text,
+                    users:commment_user
+                }));
+                res.end();
+            }
+        }
     }
     if(req.method.toLowerCase()==='post')
     {
@@ -184,6 +200,15 @@ const server = http.createServer(async(req,res)=>{
                 redisClient.incr(recept_counter);
                 res.writeHead(200,'OK',headers);
                 res.write('Recept added successfully.');
+                res.end();
+            });
+        }
+        else if(rootPath[0]==='comment'){
+            processRequestBody(req,async (dataObj)=>{
+                await redisClient.rPush('comment:text:'+dataObj.id_recept,dataObj.text);
+                await redisClient.rPush('comment:user:'+dataObj.id_recept,dataObj.user);
+                res.writeHead(200,'OK',headers);
+                res.write('Comment added successfully.');
                 res.end();
             });
         }

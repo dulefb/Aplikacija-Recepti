@@ -4,6 +4,7 @@ import { VrsteJela } from "../classes/vrsteJela";
 import { Recept } from "../classes/recept";
 import { receptiURL, usersURL, vrsta_jelaURL } from "./constants";
 import { removeChildren } from "./pocetnaEvents";
+import { Comment } from "../classes/comment"
 
 export function postUser(user:User) : Observable<boolean | void>{
     // console.log(user);
@@ -241,6 +242,46 @@ export function getReceptFromVrstaJela(vrstaJela_id:string) : Observable<Recept[
 
 export function getReceptWithID(id:number) : Observable<Recept>{
     const resp = fetch(receptiURL+"?id="+id,{method:"GET"})
+                    .then(response=>{
+                        if(response.ok){
+                            return response.json();
+                        }
+                        else{
+                            return null;
+                        }
+                    })
+                    .catch(err=>console.log(err));
+    return from(resp).pipe(take(1));
+}
+
+export function postComment(comment:Comment) : Observable<Recept>{
+    let formBody = new URLSearchParams();
+    formBody.append('id_recept',comment.id_recept.toString());
+    formBody.append('user',comment.user);
+    formBody.append('text',comment.text);
+    const resp = fetch(receptiURL,{
+                        method:"POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                          },
+                        body: formBody
+                    })
+                    .then(response=>{
+                        if(response.ok){
+                            return response.json();
+                        }
+                        else{
+                            return null;
+                        }
+                    })
+                    .catch(err=>console.log(err));
+    return from(resp).pipe(take(1));
+}
+
+export function getComment(id_recept:number) : Observable<Recept>{
+    const resp = fetch(receptiURL+'?id='+id_recept,{
+                        method:"GET"
+                    })
                     .then(response=>{
                         if(response.ok){
                             return response.json();

@@ -441,6 +441,8 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
     
 
     divReceptPage.appendChild(divReceptPageInfo);
+
+    let divReceptAddComments = document.createElement("div");
     document.querySelector(".middle").appendChild(divReceptPage);
 }
 
