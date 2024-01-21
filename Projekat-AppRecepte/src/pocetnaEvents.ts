@@ -1,6 +1,6 @@
 import { fromEvent, map, switchMap, scan, take, Observable,zip, from, Subject, combineLatest, takeUntil, forkJoin, delay, filter, debounceTime } from "rxjs";
 import { numberOfTakes } from "./constants";
-import { getAllRecept, getReceptFromVrstaJela, getReceptWithID, getUser, getUserWithEmail, getVrsteJela, getVrsteJelaWithID } from "./dbServices";
+import { getAllRecept, getComment, getReceptFromVrstaJela, getReceptWithID, getUser, getUserWithEmail, getVrsteJela, getVrsteJelaWithID } from "./dbServices";
 import { Recept } from "../classes/recept";
 import { User } from "../classes/user";
 import { VrsteJela } from "../classes/vrsteJela";
@@ -103,13 +103,17 @@ export function drawRecepte(parent_node:HTMLElement,slikaSrc:string,nazivRecepta
             .pipe(
                 switchMap(()=>getVrsteJelaWithID(id_vrstaJela))
             );
+    const comment$ = getObservableFromReceptClick(divRecept)
+            .pipe(
+                switchMap(()=>getComment(id_value))
+            );
 
-    zip(recept$,autor$,vrsteJela$)
+    zip(recept$,autor$,vrsteJela$/*,comment$*/)
         .subscribe(next=>{
             local_recept=next[0];
             local_autor=next[1];
             local_vrstaJela=next[2];
-            drawReceptPage(local_recept,local_autor,local_vrstaJela);
+            drawReceptPage(local_recept,local_autor,local_vrstaJela/*,next[3]*/);
         });
 
     parent_node.appendChild(divRecept);
@@ -194,6 +198,10 @@ export function addObservableToSearchClick(element:HTMLElement,recept:Recept) : 
             .pipe(
                 switchMap(()=>getVrsteJelaWithID(recept.vrsta_jela))
             );
+    const comment$ = eventClick$
+            .pipe(
+                switchMap(()=>getComment(recept.id))
+            )
 
     zip([recept$,autor$,vrsteJela$])
         .subscribe(next=>{

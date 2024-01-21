@@ -285,13 +285,28 @@ function AddEntriesToRedis(){
 }
 
 function AddUsers(){
+    let user ={
+        id:null,
+        name:null,
+        last_name:null,
+        email:null,
+        password:null,
+        city:null,
+        birth_date:null,
+        picture:null
+    }
 
 }
 
 async function AddRecepts(){
-    await redisClient.set('recept_counter',1);
+    await redisClient.set(recept_counter,1);
 
-
+    let id = await redisClient.get(recept_counter);
+    dataObj.id=id;
+    await redisClient.hSet('recept:'+id,dataObj);
+    redisClient.hSet('recept:'+id+':autor:'+dataObj.autor,dataObj);
+    redisClient.hSet('recept:'+id+':vrste_jela:'+dataObj.vrste_jela,dataObj);
+    redisClient.incr(recept_counter);
 }
 
 async function AddVrstaJela(){

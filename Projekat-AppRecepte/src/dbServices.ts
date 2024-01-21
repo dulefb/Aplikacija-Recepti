@@ -2,9 +2,10 @@ import { Observable, from, take, takeLast, map, toArray, mergeMap, filter } from
 import { User } from "../classes/user";
 import { VrsteJela } from "../classes/vrsteJela";
 import { Recept } from "../classes/recept";
-import { receptiURL, usersURL, vrsta_jelaURL } from "./constants";
+import { commentURL, receptiURL, usersURL, vrsta_jelaURL } from "./constants";
 import { removeChildren } from "./pocetnaEvents";
 import { Comment } from "../classes/comment"
+import { CommentResponse } from "../classes/commentResponse";
 
 export function postUser(user:User) : Observable<boolean | void>{
     // console.log(user);
@@ -254,12 +255,12 @@ export function getReceptWithID(id:number) : Observable<Recept>{
     return from(resp).pipe(take(1));
 }
 
-export function postComment(comment:Comment) : Observable<Recept>{
+export function postComment(comment:Comment) : Observable<boolean | void>{
     let formBody = new URLSearchParams();
     formBody.append('id_recept',comment.id_recept.toString());
     formBody.append('user',comment.user);
     formBody.append('text',comment.text);
-    const resp = fetch(receptiURL,{
+    const resp = fetch(commentURL,{
                         method:"POST",
                         headers: {
                             'Content-Type': 'application/json'
@@ -268,18 +269,18 @@ export function postComment(comment:Comment) : Observable<Recept>{
                     })
                     .then(response=>{
                         if(response.ok){
-                            return response.json();
+                            return true;
                         }
                         else{
-                            return null;
+                            return false;
                         }
                     })
                     .catch(err=>console.log(err));
     return from(resp).pipe(take(1));
 }
 
-export function getComment(id_recept:number) : Observable<Recept>{
-    const resp = fetch(receptiURL+'?id='+id_recept,{
+export function getComment(id_recept:number) : Observable<CommentResponse>{
+    const resp = fetch(commentURL+'?id_recept='+id_recept,{
                         method:"GET"
                     })
                     .then(response=>{
@@ -291,7 +292,7 @@ export function getComment(id_recept:number) : Observable<Recept>{
                         }
                     })
                     .catch(err=>console.log(err));
-    return from(resp).pipe(take(1));
+    return from(resp);
 }
 
 function showError(error:any){

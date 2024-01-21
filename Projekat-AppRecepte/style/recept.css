@@ -43,6 +43,35 @@
     justify-content: space-evenly;
 }
 
+.divReceptComment{
+    width:80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+.divReceptCommentEnter{
+    width:50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.divReceptCommentShow{
+    width:60%;
+    padding:15px 10px 15px 10px;
+    display: flex;
+    flex-direction: column;
+    background-color:steelblue;
+}
+
+.divComment{
+    border:1px solid black;
+}
+
+.divCommentFont{
+    font-size: large;
+    font-weight: bolder;
+}
+
 .divReceptPageSlika > img{
     width: 100%;
     height: 300px;

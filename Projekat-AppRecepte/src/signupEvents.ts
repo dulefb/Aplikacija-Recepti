@@ -89,7 +89,7 @@ export function setUpSignin(control$:Subject<string>){
                                     });
                             }
                             else{
-                                alert("Doslo je do greske,pokusajte ponovo...");
+                                alert("Ovaj email je vec zauzet,pokusajte drugi mail.");
                             }
                         });
                 }

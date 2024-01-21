@@ -1,4 +1,4 @@
-import { getUserWithEmail, getUserWithEmailAndPassword, getVrsteJela, postUser } from "./dbServices";
+import { getComment, getUserWithEmail, getUserWithEmailAndPassword, getVrsteJela, postComment, postUser } from "./dbServices";
 import { User } from "../classes/user";
 import { filter,Subject } from "rxjs";
 import { setUpLogin } from "./loginEvents";
@@ -6,7 +6,9 @@ import { setUpSignin } from "./signupEvents";
 import { addObservableToSearchClick, addObservableToVrsteRecepta, removeChildren } from "./pocetnaEvents";
 import { Recept } from "../classes/recept";
 import { VrsteJela } from "../classes/vrsteJela";
+import { Comment } from "../classes/comment";
 import { viewUserProfile } from "./profilEvents";
+import { CommentResponse } from "../classes/commentResponse";
 
 function addLinkToClassElement(class_element:string,href:string,class_name:string,text:string,id_value:string=null) : void{
     const link=document.createElement("a");
@@ -352,7 +354,7 @@ export function drawNoviRecept(parent_node:HTMLElement) : void{
     parent_node.appendChild(divReceptParent);
 }
 
-export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : void{
+export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela,comments:CommentResponse=null) : void{
     removeChildren(document.querySelector(".middle"),document.querySelectorAll(".middle > div"));
     let divReceptPage = document.createElement("div");
     divReceptPage.classList.add("divReceptPage");
@@ -441,9 +443,67 @@ export function drawReceptPage(recept:Recept,autor:User,vrsta_jela:VrsteJela) : 
     
 
     divReceptPage.appendChild(divReceptPageInfo);
-
-    let divReceptAddComments = document.createElement("div");
     document.querySelector(".middle").appendChild(divReceptPage);
+
+    
+    //Comments
+    let divReceptComments = document.createElement("div");
+    divReceptComments.classList.add("divReceptComment");
+    //Show comments
+    let divReceptCommentShow = document.createElement("div");
+    divReceptCommentShow.classList.add("divReceptCommentShow");
+
+    getComment(recept.id).subscribe(next=>{
+        for(let i=0;i<next.texts.length;i++){
+            let divComment=document.createElement("div");
+            divComment.classList.add("divComment");
+            let labelUser=document.createElement("label");
+            labelUser.classList.add("divCommentFont");
+            labelUser.innerHTML=next.users[i]+":";
+            divComment.appendChild(labelUser);
+            let labelText = document.createElement("label");
+            labelText.innerHTML=next.texts[i];
+            divComment.appendChild(labelText);
+            divReceptCommentShow.appendChild(divComment);
+        }
+    });
+    divReceptComments.appendChild(divReceptCommentShow);
+    //Submit comments
+    if(sessionStorage.getItem("current-user")!==null){
+        let divReceptCommentEnter = document.createElement("div");
+        divReceptCommentEnter.classList.add("divReceptCommentEnter");
+
+        let commentText=document.createElement("textarea"); 
+        commentText.id="commmentText";
+        commentText.innerHTML="Unesite komentar";
+        commentText.cols=30;
+        commentText.rows=7;
+        divReceptCommentEnter.appendChild(commentText);
+
+        let submitComment=document.createElement("button");
+        submitComment.classList.add("submitComment");
+        submitComment.innerHTML="Submit comment";
+        submitComment.onclick=()=>{
+            postComment({
+                id_recept:recept.id,
+                user:sessionStorage.getItem("current-user"),
+                text:commentText.value
+            }).subscribe(next=>{
+                if(next===true){
+                    alert("Komentar je postavljen uspesno");
+                    commentText.value="Unesite komentar";
+                    document.location.reload();
+                }
+                else{
+                    alert("Komentar nije postavljen, pokusajte ponovo");
+                }
+            })
+        }
+        divReceptCommentEnter.appendChild(submitComment);
+        divReceptComments.appendChild(divReceptCommentEnter);
+    }
+
+    document.querySelector(".middle").appendChild(divReceptComments);
 }
 
 export function drawUserProfile(user:User) : HTMLDivElement{
