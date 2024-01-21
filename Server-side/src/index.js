@@ -259,24 +259,16 @@ server.listen(portNumber,()=>{
     console.log("Listening on port "+portNumber+"...\n\n");
     redisClient.connect();
     redisClient.on('error', err => console.log('Redis Client Error', err));
-    // AddVrstaJela();
-    // deleteRecepts();
+    deleteAll();
+    AddVrstaJela();
+    AddUsers();
+    AddRecepts();
 });
 
-async function deleteRecepts(){
-    let keysArray = await redisClient.keys('recept:*:autor:*');
+async function deleteAll(){
+    let keysArray = await redisClient.keys('*');
     for(let i=0;i<keysArray.length;i++){
-        let recept = await redisClient.del(keysArray[i]);
-    }
-
-    keysArray = await redisClient.keys('recept:*:vrste_jela:*');
-    for(let i=0;i<keysArray.length;i++){
-        let recept = await redisClient.del(keysArray[i]);
-    }
-
-    keysArray = await redisClient.keys('recept:*');
-    for(let i=0;i<keysArray.length;i++){
-        let recept = await redisClient.del(keysArray[i]);
+        await redisClient.del(keysArray[i]);
     }
 }
 function AddEntriesToRedis(){
@@ -284,28 +276,132 @@ function AddEntriesToRedis(){
 
 }
 
-function AddUsers(){
+async function AddUsers(){
     let user ={
-        id:null,
-        name:null,
-        last_name:null,
-        email:null,
-        password:null,
-        city:null,
-        birth_date:null,
-        picture:null
-    }
+        id:0,
+        name:"Miodrag",
+        last_name:"Sivic",
+        email:"miodrag@gmail.com",
+        password:"12345678",
+        city:"null",
+        birth_date:"null",
+        picture:"../images/user/slika.jpg"
+    };
+    await redisClient.hSet(user.email,user);
 
+    user ={
+        id:0,
+        name:"Stefan",
+        last_name:"Stefanovic",
+        email:"stefan@gmail.com",
+        password:"12345678",
+        city:"null",
+        birth_date:"null",
+        picture:"../images/user/slika.jpg"
+    };
+    await redisClient.hSet(user.email,user);
+
+    user ={
+        id:0,
+        name:"Stefan",
+        last_name:"Stefanovic",
+        email:"stefan123@gmail.com",
+        password:"12345678",
+        city:"null",
+        birth_date:"null",
+        picture:"../images/user/slika.jpg"
+    };
+    await redisClient.hSet(user.email,user);
+
+    user ={
+        id:0,
+        name:"Stefan",
+        last_name:"Stefanovic",
+        email:"stefa12312n@gmail.com",
+        password:"12345678",
+        city:"null",
+        birth_date:"null",
+        picture:"../images/user/slika.jpg"
+    };
+    await redisClient.hSet(user.email,user);
 }
 
 async function AddRecepts(){
     await redisClient.set(recept_counter,1);
 
     let id = await redisClient.get(recept_counter);
-    dataObj.id=id;
-    await redisClient.hSet('recept:'+id,dataObj);
-    redisClient.hSet('recept:'+id+':autor:'+dataObj.autor,dataObj);
-    redisClient.hSet('recept:'+id+':vrste_jela:'+dataObj.vrste_jela,dataObj);
+    let recept = {
+        id:"number",
+        naziv:"string",
+        autor:"stefan@gmail.com",
+        vrsta_jela:"vrste_jela:1",
+        sastojci:"700 g brašna,oko 4,5 dl vode,30 g svežeg kvasca (ili 1 kesica suvog),5 kašika ulja",
+        priprema:"U manji sud sipajte čašu mlake vode, dodajte šećer, izmrvljen kvasac i jednu kašiku brašna, sve izmešajte, pokrijte i ostavite da se kvasac aktivira. U odgovarajući sud za mešenje prosejte brašno, dodajte so, zatim aktivirani kvasac i ulje pa uz postepeno dodavanje mlake vode zamesite testo, najpre varjačom a zatim počnite rukama, najpre u sudu a onda prebacite testo na pobrašnjenu radnu površinu i mesite dok testo ne postane glatko i prestane da se lepi za ruke. Oblikujte testo u loptu a zatim ga prebacite u sud, pokrijte i ostavite da naraste. Naraslo testo izvadite iz suda i od njega pažljivo oblikujte veknu. Stavite je na pouljenu posudu za pečenje i na nekoliko mesta je žiletom zasecite ukoso. Odozgo pospite sa malo brašna, pokrijte pa ostavite još 10-15 minuta da odmara.",
+        slika:"../images/recept/slika.jpg"
+    }
+    await redisClient.hSet('recept:'+id,recept);
+    redisClient.hSet('recept:'+id+':autor:'+recept.autor,recept);
+    redisClient.hSet('recept:'+id+':vrste_jela:'+recept.vrsta_jela,recept);
+    redisClient.incr(recept_counter);
+
+    id = await redisClient.get(recept_counter);
+    recept = {
+        id:"number",
+        naziv:"string",
+        autor:"stefan@gmail.com",
+        vrsta_jela:"vrste_jela:2",
+        sastojci:"700 g brašna,oko 4,5 dl vode,30 g svežeg kvasca (ili 1 kesica suvog),5 kašika ulja",
+        priprema:"U manji sud sipajte čašu mlake vode, dodajte šećer, izmrvljen kvasac i jednu kašiku brašna, sve izmešajte, pokrijte i ostavite da se kvasac aktivira. U odgovarajući sud za mešenje prosejte brašno, dodajte so, zatim aktivirani kvasac i ulje pa uz postepeno dodavanje mlake vode zamesite testo, najpre varjačom a zatim počnite rukama, najpre u sudu a onda prebacite testo na pobrašnjenu radnu površinu i mesite dok testo ne postane glatko i prestane da se lepi za ruke. Oblikujte testo u loptu a zatim ga prebacite u sud, pokrijte i ostavite da naraste. Naraslo testo izvadite iz suda i od njega pažljivo oblikujte veknu. Stavite je na pouljenu posudu za pečenje i na nekoliko mesta je žiletom zasecite ukoso. Odozgo pospite sa malo brašna, pokrijte pa ostavite još 10-15 minuta da odmara.",
+        slika:"../images/recept/slika.jpg"
+    }
+    await redisClient.hSet('recept:'+id,recept);
+    redisClient.hSet('recept:'+id+':autor:'+recept.autor,recept);
+    redisClient.hSet('recept:'+id+':vrste_jela:'+recept.vrsta_jela,recept);
+    redisClient.incr(recept_counter);
+
+    id = await redisClient.get(recept_counter);
+    recept = {
+        id:"number",
+        naziv:"string",
+        autor:"stefan@gmail.com",
+        vrsta_jela:"vrste_jela:1",
+        sastojci:"700 g brašna,oko 4,5 dl vode,30 g svežeg kvasca (ili 1 kesica suvog),5 kašika ulja",
+        priprema:"U manji sud sipajte čašu mlake vode, dodajte šećer, izmrvljen kvasac i jednu kašiku brašna, sve izmešajte, pokrijte i ostavite da se kvasac aktivira. U odgovarajući sud za mešenje prosejte brašno, dodajte so, zatim aktivirani kvasac i ulje pa uz postepeno dodavanje mlake vode zamesite testo, najpre varjačom a zatim počnite rukama, najpre u sudu a onda prebacite testo na pobrašnjenu radnu površinu i mesite dok testo ne postane glatko i prestane da se lepi za ruke. Oblikujte testo u loptu a zatim ga prebacite u sud, pokrijte i ostavite da naraste. Naraslo testo izvadite iz suda i od njega pažljivo oblikujte veknu. Stavite je na pouljenu posudu za pečenje i na nekoliko mesta je žiletom zasecite ukoso. Odozgo pospite sa malo brašna, pokrijte pa ostavite još 10-15 minuta da odmara.",
+        slika:"../images/recept/slika.jpg"
+    }
+    await redisClient.hSet('recept:'+id,recept);
+    redisClient.hSet('recept:'+id+':autor:'+recept.autor,recept);
+    redisClient.hSet('recept:'+id+':vrste_jela:'+recept.vrsta_jela,recept);
+    redisClient.incr(recept_counter);
+
+    id = await redisClient.get(recept_counter);
+    recept = {
+        id:"number",
+        naziv:"string",
+        autor:"stefan@gmail.com",
+        vrsta_jela:"vrste_jela:1",
+        sastojci:"700 g brašna,oko 4,5 dl vode,30 g svežeg kvasca (ili 1 kesica suvog),5 kašika ulja",
+        priprema:"U manji sud sipajte čašu mlake vode, dodajte šećer, izmrvljen kvasac i jednu kašiku brašna, sve izmešajte, pokrijte i ostavite da se kvasac aktivira. U odgovarajući sud za mešenje prosejte brašno, dodajte so, zatim aktivirani kvasac i ulje pa uz postepeno dodavanje mlake vode zamesite testo, najpre varjačom a zatim počnite rukama, najpre u sudu a onda prebacite testo na pobrašnjenu radnu površinu i mesite dok testo ne postane glatko i prestane da se lepi za ruke. Oblikujte testo u loptu a zatim ga prebacite u sud, pokrijte i ostavite da naraste. Naraslo testo izvadite iz suda i od njega pažljivo oblikujte veknu. Stavite je na pouljenu posudu za pečenje i na nekoliko mesta je žiletom zasecite ukoso. Odozgo pospite sa malo brašna, pokrijte pa ostavite još 10-15 minuta da odmara.",
+        slika:"../images/recept/slika.jpg"
+    }
+    await redisClient.hSet('recept:'+id,recept);
+    redisClient.hSet('recept:'+id+':autor:'+recept.autor,recept);
+    redisClient.hSet('recept:'+id+':vrste_jela:'+recept.vrsta_jela,recept);
+    redisClient.incr(recept_counter);
+
+    id = await redisClient.get(recept_counter);
+    recept = {
+        id:"number",
+        naziv:"string",
+        autor:"stefan@gmail.com",
+        vrsta_jela:"vrste_jela:1",
+        sastojci:"700 g brašna,oko 4,5 dl vode,30 g svežeg kvasca (ili 1 kesica suvog),5 kašika ulja",
+        priprema:"U manji sud sipajte čašu mlake vode, dodajte šećer, izmrvljen kvasac i jednu kašiku brašna, sve izmešajte, pokrijte i ostavite da se kvasac aktivira. U odgovarajući sud za mešenje prosejte brašno, dodajte so, zatim aktivirani kvasac i ulje pa uz postepeno dodavanje mlake vode zamesite testo, najpre varjačom a zatim počnite rukama, najpre u sudu a onda prebacite testo na pobrašnjenu radnu površinu i mesite dok testo ne postane glatko i prestane da se lepi za ruke. Oblikujte testo u loptu a zatim ga prebacite u sud, pokrijte i ostavite da naraste. Naraslo testo izvadite iz suda i od njega pažljivo oblikujte veknu. Stavite je na pouljenu posudu za pečenje i na nekoliko mesta je žiletom zasecite ukoso. Odozgo pospite sa malo brašna, pokrijte pa ostavite još 10-15 minuta da odmara.",
+        slika:"../images/recept/slika.jpg"
+    }
+    await redisClient.hSet('recept:'+id,recept);
+    redisClient.hSet('recept:'+id+':autor:'+recept.autor,recept);
+    redisClient.hSet('recept:'+id+':vrste_jela:'+recept.vrsta_jela,recept);
     redisClient.incr(recept_counter);
 }
 
