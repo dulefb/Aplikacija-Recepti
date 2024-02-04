@@ -133,6 +133,7 @@ const server = http.createServer(async(req,res)=>{
                     let recept = await redisClient.hGetAll(keysArray[i]);
                     receptAll.push(recept);
                 }
+                // console.log(receptAll);
                 res.writeHead(200,'OK',headers);
                 res.write(JSON.stringify(receptAll[0]));
                 res.end();
@@ -195,9 +196,9 @@ const server = http.createServer(async(req,res)=>{
                 const id = await redisClient.get(recept_counter);
                 dataObj.id=id;
                 await redisClient.hSet('recept:'+id,dataObj);
-                redisClient.hSet('recept:'+id+':autor:'+dataObj.autor,dataObj);
-                redisClient.hSet('recept:'+id+':vrste_jela:'+dataObj.vrste_jela,dataObj);
-                redisClient.incr(recept_counter);
+                await redisClient.hSet('recept:'+id+':autor:'+dataObj.autor,dataObj);
+                await redisClient.hSet('recept:'+id+':vrste_jela:'+dataObj.vrste_jela,dataObj);
+                await redisClient.incr(recept_counter);
                 res.writeHead(200,'OK',headers);
                 res.write('Recept added successfully.');
                 res.end();
@@ -255,14 +256,16 @@ const server = http.createServer(async(req,res)=>{
     }
 });
 
-server.listen(portNumber,()=>{
+server.listen(portNumber,async()=>{
     console.log("Listening on port "+portNumber+"...\n\n");
-    redisClient.connect();
-    redisClient.on('error', err => console.log('Redis Client Error', err));
-    deleteAll();
-    AddVrstaJela();
-    AddUsers();
-    AddRecepts();
+    await redisClient.connect();
+    await redisClient.on('error', err => console.log('Redis Client Error:\n', err));
+    // await redisClient.set(recept_counter,1);
+    // await deleteAll();
+    // await AddVrstaJela();
+    // AddUsers();
+    // AddRecepts();
+    console.log("All done.\n");
 });
 
 async function deleteAll(){
@@ -428,7 +431,7 @@ async function AddVrstaJela(){
     redisClient.set('vrste_jela:'+id,'Kolaci');
     redisClient.incr(vrste_jela_counter);
 
-    // id = await redisClient.get(vrste_jela_counter);
-    // redisClient.set('vrste_jela:'+id,'Predjelo');
-    // redisClient.incr(vrste_jela_counter);
+    id = await redisClient.get(vrste_jela_counter);
+    redisClient.set('vrste_jela:'+id,'Predjelo');
+    redisClient.incr(vrste_jela_counter);
 }
